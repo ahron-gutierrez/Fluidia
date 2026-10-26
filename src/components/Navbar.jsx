@@ -11,6 +11,9 @@ function Navbar() {
           <Link to="/overview" className="nav-link">
             Lessons
           </Link>
+          <Link to="/account/edit" className="nav-link">
+            Account
+          </Link>
           <Link to="/login" className="nav-link">
             Log in
           </Link>

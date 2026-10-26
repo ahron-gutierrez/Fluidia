@@ -38,9 +38,7 @@ function Login() {
                   Log in
                 </button>
               </form>
-              <p className="small text-secondary mt-3 mb-0">
-                This preview does not yet connect to an authentication service.
-              </p>
+             
               <p className="mt-3 mb-0">
                 New here? <Link to="/signup">Create an account</Link>
               </p>

@@ -4,20 +4,16 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
 import Home from "./pages/Home";
+import EditAccount from "./pages/EditAccount";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import Signup from "./pages/Signup";
 
 import Overview from "./features/Overview";
-
 import FluidsPage from "./features/01_fluids/page";  
-
 import DensityPage from "./features/02_density/page";
-
 import SpecificGravityPage from "./features/03_specific-gravity/page";
-
 import ArchimedesPage from "./features/04_archimedes/page";
-
 import RateOfFlowPage from "./features/05_rate-of-flow/page";
 
 function App() {
@@ -28,6 +24,7 @@ function App() {
       <main className="flex-grow-1">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/account/edit" element={<EditAccount />} />
           <Route path="/login" element={<Login />} />
           <Route path="/overview" element={<Overview />} />
           <Route path="/signup" element={<Signup />} />
