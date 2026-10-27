@@ -1,0 +1,115 @@
+export const QUESTS = [
+  {
+    id: "village-beneath-water",
+    title: "The Village Beneath the Water",
+    route: "/fluids/pressure-density",
+    area: "Home Village",
+    topic: "Fluid pressure, density, and specific gravity",
+    difficulty: "Intro",
+    description:
+      "A village reservoir is behaving like it has a mind of its own. Test how depth and density change pressure before the water system resets itself.",
+  },
+  {
+    id: "sunken-cargo",
+    title: "The Sunken Cargo",
+    route: "/fluids/archimedes",
+    area: "The Harbor",
+    topic: "Archimedes' principle, buoyancy, and floating or sinking",
+    difficulty: "Adventurer",
+    description:
+      "Cargo crates have drifted to the harbor floor. Decide which objects can be recovered by understanding buoyancy and displaced fluid.",
+  },
+  {
+    id: "windmills-secret",
+    title: "The Windmill's Secret",
+    route: "/fluids/rate-of-flow",
+    area: "Windmill Town",
+    topic: "Bernoulli's principle and fluid flow",
+    difficulty: "Scholar",
+    description:
+      "Wind patterns around the town's mills are accelerating and slowing unexpectedly. Trace how changing flow speed changes pressure in a moving fluid.",
+  },
+];
+
+export const DEFAULT_PROGRESS = {
+  introCompleted: false,
+  unlockedQuests: ["village-beneath-water"],
+  completedQuests: [],
+  currentQuest: "village-beneath-water",
+};
+
+export function getCurrentUser() {
+  try {
+    const user = localStorage.getItem("aquademia-current-user");
+    return user ? JSON.parse(user) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function setCurrentUser(user) {
+  if (!user) {
+    localStorage.removeItem("aquademia-current-user");
+    return;
+  }
+
+  localStorage.setItem("aquademia-current-user", JSON.stringify(user));
+}
+
+export function getUsers() {
+  try {
+    const users = localStorage.getItem("aquademia-users");
+    return users ? JSON.parse(users) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function setUsers(users) {
+  localStorage.setItem("aquademia-users", JSON.stringify(users));
+}
+
+export function getProgress(userId) {
+  if (!userId) {
+    return { ...DEFAULT_PROGRESS };
+  }
+
+  try {
+    const raw = localStorage.getItem(`aquademia-progress-${userId}`);
+    if (!raw) {
+      return { ...DEFAULT_PROGRESS };
+    }
+
+    const saved = JSON.parse(raw);
+    return {
+      ...DEFAULT_PROGRESS,
+      ...saved,
+      unlockedQuests: saved.unlockedQuests ?? DEFAULT_PROGRESS.unlockedQuests,
+      completedQuests: saved.completedQuests ?? DEFAULT_PROGRESS.completedQuests,
+    };
+  } catch {
+    return { ...DEFAULT_PROGRESS };
+  }
+}
+
+export function setProgress(userId, progress) {
+  if (!userId) {
+    return;
+  }
+
+  localStorage.setItem(
+    `aquademia-progress-${userId}`,
+    JSON.stringify({
+      ...DEFAULT_PROGRESS,
+      ...progress,
+    })
+  );
+}
+
+export function getQuestById(id) {
+  return QUESTS.find((quest) => quest.id === id) ?? QUESTS[0];
+}
+
+export function getQuestProgressLabel(progress) {
+  return `${progress.completedQuests.length}/${QUESTS.length} quests solved`;
+}

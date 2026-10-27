@@ -1,28 +1,64 @@
+import { useState } from "react";
+
+import { QUESTS, getCurrentUser, getProgress, setProgress } from "../../data/gameData";
 import RateOfFlowSimulation from "./simulation";
 
 function RateOfFlowPage() {
+  const currentUser = getCurrentUser();
+  const currentProgress = currentUser ? getProgress(currentUser.id) : { completedQuests: [] };
+  const [questComplete, setQuestComplete] = useState(currentProgress.completedQuests.includes("windmills-secret"));
+
+  const handleQuestComplete = () => {
+    if (!currentUser) {
+      return;
+    }
+
+    const questId = "windmills-secret";
+    const nextProgress = getProgress(currentUser.id);
+    const completedQuests = [...new Set([...nextProgress.completedQuests, questId])];
+    const nextQuestIndex = QUESTS.findIndex((quest) => quest.id === questId) + 1;
+    const unlockedQuests = [...new Set([...nextProgress.unlockedQuests, ...QUESTS.slice(0, nextQuestIndex + 1).map((quest) => quest.id)])];
+
+    setProgress(currentUser.id, {
+      ...nextProgress,
+      completedQuests,
+      unlockedQuests,
+      currentQuest: QUESTS[nextQuestIndex]?.id || questId,
+    });
+    setQuestComplete(true);
+  };
+
   return (
-    <div className="container py-4">
-      <h1 className="mb-4">Rate of Flow</h1>
-      <div className="row g-4">
-        <section className="col-12 col-lg-6" aria-labelledby="rate-of-flow-definition">
-          <div className="card h-100">
-            <div className="card-body">
-              <h2 id="rate-of-flow-definition" className="h4">Definition</h2>
-              <p className="mb-0">This is a definition.</p>
-            </div>
-          </div>
+    <main className="container py-5">
+      <div className="pixel-panel quest-panel">
+        <p className="eyebrow accent">Fluid dynamics</p>
+        <h1 className="pixel-heading md">Fluid Flow and Bernoulli's Principle</h1>
+        <p className="lead">
+          In steady flow, changes in fluid speed are related to changes in pressure.
+          Use the continuity equation and Bernoulli's principle to analyze moving fluids.
+        </p>
+      </div>
+
+      <div className="quest-layout-grid">
+        <section className="pixel-panel quest-card large-card">
+          <h2>Scientific explanation</h2>
+          <p>In a streamlined flow, fluid speeds up where the passage narrows. According to the continuity equation, if the cross-sectional area decreases, the fluid must move faster through that region.</p>
+          <p>Bernoulli's principle explains that when moving fluid speed increases, static pressure typically decreases, assuming energy is conserved in steady, incompressible flow.</p>
+          <p>It is important not to treat this as the sole explanation for all lift; wings and airfoils involve additional details beyond a single Bernoulli statement.</p>
         </section>
-        <section className="col-12 col-lg-6" aria-labelledby="rate-of-flow-simulation">
-          <div className="card h-100">
-            <div className="card-body">
-              <h2 id="rate-of-flow-simulation" className="h4">Simulation</h2>
-              <RateOfFlowSimulation />
-            </div>
-          </div>
+
+        <section className="pixel-panel quest-card large-card simulation-card">
+          <h2>Interactive flow lab</h2>
+          <RateOfFlowSimulation />
         </section>
       </div>
-    </div>
+
+      <div className="inline-actions">
+        <button type="button" className="btn btn-secondary" onClick={handleQuestComplete}>
+          {questComplete ? "Lesson complete" : "Mark lesson complete"}
+        </button>
+      </div>
+    </main>
   );
 }
 

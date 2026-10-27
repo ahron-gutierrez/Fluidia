@@ -8,9 +8,11 @@ import EditAccount from "./pages/EditAccount";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import Signup from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
+import StoryIntro from "./pages/StoryIntro";
 
 import Overview from "./features/Overview";
-import FluidsPage from "./features/01_fluids/page";  
+import FluidsPage from "./features/01_fluids/page";
 import DensityPage from "./features/02_density/page";
 import SpecificGravityPage from "./features/03_specific-gravity/page";
 import ArchimedesPage from "./features/04_archimedes/page";
@@ -18,12 +20,14 @@ import RateOfFlowPage from "./features/05_rate-of-flow/page";
 
 function App() {
   return (
-    <div className="d-flex flex-column min-vh-100">
+    <div className="page-shell">
       <Navbar />
 
-      <main className="flex-grow-1">
+      <main className="page-main">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/intro" element={<StoryIntro />} />
           <Route path="/account/edit" element={<EditAccount />} />
           <Route path="/login" element={<Login />} />
           <Route path="/overview" element={<Overview />} />
@@ -35,7 +39,6 @@ function App() {
           <Route path="/fluids/specific-gravity" element={<SpecificGravityPage />} />
           <Route path="/fluids/archimedes" element={<ArchimedesPage />} />
           <Route path="/fluids/rate-of-flow" element={<RateOfFlowPage />} />
-        
 
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -1,16 +1,52 @@
 import { Link } from "react-router-dom";
 
+const lessonLinks = [
+  {
+    title: "Fluid Pressure and Density",
+    description: "Explore how fluid pressure changes with depth and density.",
+    path: "/fluids/pressure-density",
+  },
+  {
+    title: "Specific Gravity",
+    description: "Compare a substance's density with the density of water.",
+    path: "/fluids/specific-gravity",
+  },
+  {
+    title: "Buoyancy and Archimedes' Principle",
+    description: "Learn how displaced fluid creates buoyant force on an object.",
+    path: "/fluids/archimedes",
+  },
+  {
+    title: "Fluid Flow and Bernoulli's Principle",
+    description: "Relate fluid speed, pressure, and cross-sectional area.",
+    path: "/fluids/rate-of-flow",
+  },
+];
+
 function FluidsPage() {
   return (
-    <div className="container py-4">
-      <h1>Fluids</h1>
-      <p className="lead">
-        A fluid is any substance that can flow, such as liquids and gases.
-        Here you will explore how fluids push, lift, and move things.
-      </p>
+    <main className="container py-5">
+      <div className="pixel-panel overview-panel">
+        <p className="eyebrow accent">Fluid physics</p>
+        <h1 className="pixel-heading md">Fluid Mechanics</h1>
+        <p className="lead">
+          Study fluid properties, pressure, buoyancy, and flow through explanations,
+          interactive simulations, and knowledge checks.
+        </p>
+      </div>
 
-    </div>
-            
+      <div className="quest-grid">
+        {lessonLinks.map((lesson) => (
+          <div key={lesson.path} className="pixel-panel quest-card">
+            <h2>{lesson.title}</h2>
+            <p>{lesson.description}</p>
+            <Link to={lesson.path} className="btn btn-primary">
+              Study concept
+            </Link>
+          </div>
+        ))}
+      </div>
+    </main>
   );
 }
 

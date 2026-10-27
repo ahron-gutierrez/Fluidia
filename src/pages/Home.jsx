@@ -1,42 +1,43 @@
 import { Link } from "react-router-dom";
 
+import { getCurrentUser, getProgress } from "../data/gameData";
+
 function Home() {
+  const currentUser = getCurrentUser();
+  const introCompleted = currentUser ? getProgress(currentUser.id).introCompleted : false;
+
+  const primaryRoute = currentUser ? (introCompleted ? "/dashboard" : "/intro") : "/signup";
+
   return (
-    <section className="container py-5">
-      <div className="row align-items-center g-5 py-5">
-        <div className="col-lg-7">
-          <p className="text-primary fw-semibold text-uppercase">[Website Name]</p>
-          <h1 className="display-4 fw-bold">[Tagline?]</h1>
-          <p className="lead text-secondary mt-3">
-            [Descr.]
-          </p>
-          <div className="d-flex flex-wrap gap-3 mt-4">
-            <Link to="/signup" className="btn btn-primary btn-lg">
-              Get started
-            </Link>
-            <Link to="/login" className="btn btn-outline-primary btn-lg">
-              Log in
-            </Link>
-            <Link to="/overview" className="btn btn-link btn-lg">
-              Explore lessons
-            </Link>
-          </div>
+    <main className="landing-page">
+      <div className="landing-scene">
+        <div className="parallax-layers" aria-hidden="true">
+          <div className="parallax-layer sky-layer" />
+          <div className="parallax-layer mountains-layer" />
+          <div className="parallax-layer hills-layer" />
+          <div className="parallax-layer forest-layer" />
+          <div className="parallax-layer foreground-layer" />
         </div>
-        <div className="col-lg-5">
-          <div className="card border-0 shadow-sm">
-            <div className="card-body p-4">
-              <h2 className="h4">Start with fluids</h2>
-              <p className="text-secondary">
-                Learn about density, buoyancy, and how fluids move.
-              </p>
-              <Link to="/overview" className="btn btn-outline-primary">
-                Browse the Lesson
-              </Link>
-            </div>
+
+        <div className="scene-vignette" aria-hidden="true" />
+
+        <div className="landing-copy">
+          <p className="eyebrow hero-kicker">Welcome to</p>
+          <h1 className="pixel-heading hero-title giant-title">
+            <span className="title-gradient">FLUIDIA</span>
+          </h1>
+          <p className="hero-subtitle">
+            Learn the hidden laws of motion, pressure, and flow through a living world of water, wind, and discovery.
+          </p>
+          <div className="cta-row">
+            <Link to={primaryRoute} className="btn btn-primary btn-lg hero-button">
+              {currentUser ? (introCompleted ? "Continue journey" : "Begin adventure") : "Get started"}
+            </Link>
           </div>
         </div>
       </div>
-    </section>
+
+    </main>
   );
 }
 

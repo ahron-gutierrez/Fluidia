@@ -1,8 +1,9 @@
 function Footer() {
   return (
-    <footer className="border-top mt-auto">
-      <div className="container py-3 text-secondary small">
-        [Footer, saka ko na lalagyan weyt wala ako maisip]
+    <footer className="site-footer">
+      <div className="container footer-shell">
+        <span>Fluidia</span>
+        <span>© 2026 Fluidia</span>
       </div>
     </footer>
   );
