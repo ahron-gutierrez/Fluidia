@@ -1,16 +1,19 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-import { getCurrentUser, getUsers, setCurrentUser, setUsers } from "../data/gameData";
+import { deleteAccount, getCurrentUser, updateAccount } from "../data/gameData";
 
 function EditAccount() {
-  const currentUser = getCurrentUser();
+  const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState(getCurrentUser());
   const [formValues, setFormValues] = useState({
     name: currentUser?.name ?? "",
     email: currentUser?.email ?? "",
     password: "",
   });
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("error");
+  const [score, setScore] = useState(currentUser?.score ?? 0);
 
   if (!currentUser) {
     return (
@@ -34,23 +37,56 @@ function EditAccount() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const users = getUsers();
-    const updatedUsers = users.map((user) => {
-      if (user.id !== currentUser.id) {
-        return user;
-      }
+    const nextEmail = formValues.email.trim() || currentUser.email;
+    const nextPassword = formValues.password || currentUser.password;
+    const updatedUser = updateAccount(
+      currentUser.id,
+      nextEmail,
+      nextPassword,
+      score,
+      formValues.name.trim() || currentUser.name
+    );
 
-      const nextName = formValues.name.trim() || user.name;
-      const nextEmail = formValues.email.trim() || user.email;
-      const nextPassword = formValues.password ? formValues.password : user.password;
+    if (!updatedUser) {
+      setMessageType("error");
+      setMessage("That email address is already associated with another account.");
+      return;
+    }
 
-      const updatedUser = { ...user, name: nextName, email: nextEmail, password: nextPassword };
-      setCurrentUser(updatedUser);
-      return updatedUser;
-    });
-
-    setUsers(updatedUsers);
+    setCurrentUser(updatedUser);
+    setMessageType("success");
     setMessage("Your account details were saved.");
+  };
+
+  const handleResetScore = () => {
+    const updatedUser = updateAccount(
+      currentUser.id,
+      currentUser.email,
+      currentUser.password,
+      0,
+      currentUser.name
+    );
+
+    if (!updatedUser) {
+      setMessageType("error");
+      setMessage("That email address is already associated with another account.");
+      return;
+    }
+
+    setCurrentUser(updatedUser);
+    setScore(0);
+    setMessageType("success");
+    setMessage("Your score has been reset.");
+  };
+
+  const handleDeleteAccount = () => {
+    if (!window.confirm("Delete your account and saved progress? This cannot be undone.")) {
+      return;
+    }
+
+    if (deleteAccount(currentUser.id)) {
+      navigate("/");
+    }
   };
 
   return (
@@ -96,7 +132,14 @@ function EditAccount() {
             onChange={handleChange}
           />
 
-          {message ? <p className="form-message success">{message}</p> : null}
+          <div className="inline-actions">
+            <p className="form-label">Score: {score}</p>
+            <button type="button" className="btn btn-secondary" onClick={handleResetScore}>
+              Reset score
+            </button>
+          </div>
+
+          {message ? <p className={`form-message ${messageType}`}>{message}</p> : null}
 
           <div className="inline-actions">
             <Link to="/dashboard" className="btn btn-secondary">
@@ -106,6 +149,9 @@ function EditAccount() {
               Save changes
             </button>
           </div>
+          <button type="button" className="btn btn-danger" onClick={handleDeleteAccount}>
+            Delete account
+          </button>
         </form>
       </div>
     </main>

@@ -16,7 +16,6 @@ function Home() {
           <div className="parallax-layer mountains-layer" />
           <div className="parallax-layer hills-layer" />
           <div className="parallax-layer forest-layer" />
-          <div className="parallax-layer foreground-layer" />
         </div>
 
         <div className="scene-vignette" aria-hidden="true" />

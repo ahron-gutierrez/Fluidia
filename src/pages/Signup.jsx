@@ -1,7 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { DEFAULT_PROGRESS, getCurrentUser, getProgress, getUsers, setCurrentUser, setProgress, setUsers } from "../data/gameData";
+import {
+  DEFAULT_PROGRESS,
+  addAccount,
+  getCurrentUser,
+  getProgress,
+  setCurrentUser,
+  setProgress,
+} from "../data/gameData";
 
 function Signup() {
   const navigate = useNavigate();
@@ -24,23 +31,12 @@ function Signup() {
       return;
     }
 
-    const users = getUsers();
-    const emailExists = users.some((user) => user.email.toLowerCase() === trimmedEmail.toLowerCase());
-
-    if (emailExists) {
+    const newUser = addAccount(trimmedEmail, formValues.password, 0, trimmedName);
+    if (!newUser) {
       setMessage("An account already exists with that email address.");
       return;
     }
 
-    const newUser = {
-      id: `user-${Date.now()}`,
-      name: trimmedName,
-      email: trimmedEmail,
-      password: formValues.password,
-    };
-
-    const updatedUsers = [...users, newUser];
-    setUsers(updatedUsers);
     setCurrentUser(newUser);
     setProgress(newUser.id, { ...DEFAULT_PROGRESS, introCompleted: false });
 

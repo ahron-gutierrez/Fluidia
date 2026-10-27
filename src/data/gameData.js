@@ -69,6 +69,92 @@ export function setUsers(users) {
   localStorage.setItem("aquademia-users", JSON.stringify(users));
 }
 
+export function addAccount(email, password, score = 0, name = "") {
+  const users = getUsers();
+  const normalizedEmail = email.trim();
+
+  if (users.some((user) => user.email.toLowerCase() === normalizedEmail.toLowerCase())) {
+    return null;
+  }
+
+  const account = {
+    id: `user-${Date.now()}`,
+    name,
+    email: normalizedEmail,
+    password,
+    score,
+  };
+
+  setUsers([...users, account]);
+  return account;
+}
+
+export function updateAccount(id, email, password, score, name) {
+  const users = getUsers();
+  const normalizedEmail = email.trim();
+
+  if (
+    users.some(
+      (user) => user.id !== id && user.email.toLowerCase() === normalizedEmail.toLowerCase()
+    )
+  ) {
+    return null;
+  }
+
+  let updatedAccount = null;
+  const updatedUsers = users.map((user) => {
+    if (user.id !== id) {
+      return user;
+    }
+
+    updatedAccount = {
+      ...user,
+      name: name ?? user.name,
+      email: normalizedEmail,
+      password,
+      score,
+    };
+    return updatedAccount;
+  });
+
+  if (!updatedAccount) {
+    return null;
+  }
+
+  setUsers(updatedUsers);
+  if (getCurrentUser()?.id === id) {
+    setCurrentUser(updatedAccount);
+  }
+  return updatedAccount;
+}
+
+export function deleteAccount(id) {
+  const users = getUsers();
+  const accountExists = users.some((user) => user.id === id);
+
+  if (!accountExists) {
+    return false;
+  }
+
+  setUsers(users.filter((user) => user.id !== id));
+  localStorage.removeItem(`aquademia-progress-${id}`);
+
+  if (getCurrentUser()?.id === id) {
+    setCurrentUser(null);
+  }
+
+  return true;
+}
+
+export function login(email, password) {
+  const normalizedEmail = email.trim().toLowerCase();
+  return getUsers().find(
+    (user) =>
+      user.email.toLowerCase() === normalizedEmail &&
+      user.password === password
+  ) ?? null;
+}
+
 export function getProgress(userId) {
   if (!userId) {
     return { ...DEFAULT_PROGRESS };
