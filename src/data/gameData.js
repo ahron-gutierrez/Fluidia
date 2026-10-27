@@ -7,7 +7,7 @@ export const QUESTS = [
     topic: "Fluid pressure, density, and specific gravity",
     difficulty: "Intro",
     description:
-      "A village reservoir is behaving like it has a mind of its own. Test how depth and density change pressure before the water system resets itself.",
+      "The reservoir in the village is behaving like it has a mind of its own. Test how depth and density change pressure before the water system resets itself.",
   },
   {
     id: "sunken-cargo",
@@ -138,12 +138,35 @@ export function deleteAccount(id) {
 
   setUsers(users.filter((user) => user.id !== id));
   localStorage.removeItem(`aquademia-progress-${id}`);
+  localStorage.removeItem(`aquademia-avatar-${id}`);
 
   if (getCurrentUser()?.id === id) {
     setCurrentUser(null);
   }
 
   return true;
+}
+
+export function getAvatar(userId) {
+  if (!userId) {
+    return null;
+  }
+
+  try {
+    const savedAvatar = localStorage.getItem(`aquademia-avatar-${userId}`);
+    return savedAvatar ? JSON.parse(savedAvatar) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function setAvatar(userId, avatar) {
+  if (!userId || !avatar?.spriteId) {
+    throw new TypeError("A user ID and avatar sprite are required.");
+  }
+
+  localStorage.setItem(`aquademia-avatar-${userId}`, JSON.stringify(avatar));
+  window.dispatchEvent(new CustomEvent("fluidia-avatar-change", { detail: { userId } }));
 }
 
 export function login(email, password) {
