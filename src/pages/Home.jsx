@@ -26,7 +26,7 @@ function Home() {
             <span className="title-gradient">FLUIDIA</span>
           </h1>
           <p className="hero-subtitle">
-            Learn the hidden laws of motion, pressure, and flow through a living world of water, wind, and discovery.
+            Discover the physics behind fluids through a living world of water, wind, and discovery.
           </p>
           <div className="cta-row">
             <Link to={primaryRoute} className="btn btn-primary btn-lg hero-button">

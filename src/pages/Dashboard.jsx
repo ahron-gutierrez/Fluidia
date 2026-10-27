@@ -1,18 +1,22 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
+import AnimatedAvatar from "../components/AnimatedAvatar";
+import AvatarEditor from "../components/AvatarEditor";
+import { DEFAULT_AVATAR_ROW } from "../data/avatarAssets";
 import {
-  DEFAULT_PROGRESS,
   QUESTS,
+  getAvatar,
   getCurrentUser,
   getProgress,
   getQuestById,
   getQuestProgressLabel,
-  setCurrentUser,
 } from "../data/gameData";
 
 function Dashboard() {
-  const navigate = useNavigate();
   const currentUser = getCurrentUser();
+  const [avatar, setAvatar] = useState(() => getAvatar(currentUser?.id));
+  const [isAvatarEditorOpen, setIsAvatarEditorOpen] = useState(false);
 
   if (!currentUser) {
     return (
@@ -29,111 +33,95 @@ function Dashboard() {
   }
 
   const progress = getProgress(currentUser.id);
-  const unlockedIds = progress.unlockedQuests ?? DEFAULT_PROGRESS.unlockedQuests;
+  const completedQuests = progress.completedQuests ?? [];
   const currentQuest = getQuestById(progress.currentQuest || QUESTS[0].id);
-
-  const completedCount = progress.completedQuests?.length ?? 0;
+  const completedCount = completedQuests.length;
   const progressPercent = Math.round((completedCount / QUESTS.length) * 100);
 
-  const handleLogout = () => {
-    setCurrentUser(null);
-    navigate("/");
-  };
-
   return (
-    <main className="container py-5 dashboard-layout">
-      <section className="pixel-panel hero-panel">
+    <main className="container py-5 dashboard-layout dashboard-game-layout">
+      <section className="pixel-panel dashboard-welcome-bar">
         <div>
-          <p className="eyebrow accent">My Progress</p>
-          <h1 className="pixel-heading md">Welcome back, {currentUser.name || "Explorer"}.</h1>
-          <p className="lead">
-            The laws of flow are still hidden in plain sight. Continue tracing the clues across the world map.
-          </p>
+          <h1 className="pixel-heading md">Welcome to Fluidia, {currentUser.name || "Explorer"}!</h1>
+          <p>Explore the map and visit each region to uncover the physics of fluids.</p>
         </div>
-        <div className="progress-block">
-          <span className="progress-label">Research progress</span>
-          <strong>{progressPercent}%</strong>
-          <div className="progress-bar">
+        <div className="dashboard-progress-summary">
+          <div className="progress-summary-heading">
+            <span>Journey progress</span>
+            <strong>{progressPercent}%</strong>
+          </div>
+          <div className="progress-bar" aria-label={`${progressPercent}% journey progress`}>
             <span style={{ width: `${progressPercent}%` }} />
           </div>
           <small>{getQuestProgressLabel(progress)}</small>
         </div>
       </section>
 
-      <section className="map-grid">
-        {QUESTS.map((quest) => {
-          const unlocked = unlockedIds.includes(quest.id);
-          const completed = progress.completedQuests?.includes(quest.id);
+      <div className="dashboard-main-grid">
+        <section className="pixel-panel fluidia-map-panel" aria-label="Fluidia map placeholder">
+          <div className="fluidia-map-placeholder" aria-hidden="true" />
+        </section>
 
-          return (
-            <Link
-              key={quest.id}
-              to={unlocked ? quest.route : "#"}
-              className={`quest-node ${completed ? "complete" : ""} ${unlocked ? "" : "locked"}`}
-              aria-disabled={!unlocked}
-              onClick={(event) => {
-                if (!unlocked) {
-                  event.preventDefault();
-                }
-              }}
-            >
-              <span className="marker-dot" />
-              <strong>{"{Quest}"}</strong>
-              <small>{quest.area}</small>
-              <span className="quest-status">
-                {completed ? "Solved" : unlocked ? "Unlocked" : "Locked"}
-              </span>
-            </Link>
-          );
-        })}
-      </section>
-
-      <section className="dashboard-columns">
-        <article className="pixel-panel side-panel">
-          <p className="eyebrow accent">Continue quest</p>
-          <h2 className="pixel-heading sm">{"{Quest}"}</h2>
-          <p>{"{Description}"}</p>
-          <div className="inline-actions">
-            <Link to={currentQuest.route} className="btn btn-primary">
-              Continue
-            </Link>
-            <Link to="/intro" className="btn btn-secondary">
-              Replay story
-            </Link>
-          </div>
-        </article>
-
-        <article className="pixel-panel side-panel">
-          <p className="eyebrow accent">Journal</p>
-          <ul className="quest-log">
-            {QUESTS.map((quest) => (
-              <li key={quest.id} className={progress.completedQuests?.includes(quest.id) ? "done" : ""}>
-                <span>{"{Quest}"}</span>
-                <strong>{progress.completedQuests?.includes(quest.id) ? "Complete" : "In progress"}</strong>
-              </li>
-            ))}
-          </ul>
-        </article>
-
-        <aside className="pixel-panel side-panel profile-panel">
-          <p className="eyebrow accent">Profile</p>
-          <div className="profile-identity">
-            <div className="avatar">{(currentUser.name || "A").slice(0, 2).toUpperCase()}</div>
-            <div>
-              <strong>{currentUser.name || "Explorer"}</strong>
-              <small>{currentUser.email}</small>
+        <aside className="dashboard-sidebar">
+          <section className="pixel-panel dashboard-profile-panel">
+            <div className="dashboard-profile-identity">
+              <AnimatedAvatar
+                className="dashboard-avatar"
+                spriteId={avatar?.spriteId}
+                row={avatar?.row ?? DEFAULT_AVATAR_ROW}
+                animate
+                size={52}
+              />
+              <div className="dashboard-profile-name">
+                <strong>{currentUser.name || "Explorer"}</strong>
+              </div>
             </div>
-          </div>
-          <div className="inline-actions stacked">
-            <Link to="/account/edit" className="btn btn-secondary">
-              Account settings
+
+            <div className="dashboard-stats">
+              <div className="dashboard-stat">
+                <span className="stat-icon score-icon" aria-hidden="true">✦</span>
+                <div><strong>{currentUser.score ?? 0}</strong><small>Total score</small></div>
+              </div>
+              <div className="dashboard-stat">
+                <span className="stat-icon quest-icon" aria-hidden="true">◈</span>
+                <div><strong>{completedCount}/{QUESTS.length}</strong><small>Quests solved</small></div>
+              </div>
+            </div>
+
+            <div className="dashboard-profile-actions">
+              <button
+                type="button"
+                className="btn btn-secondary dashboard-profile-button"
+                onClick={() => setIsAvatarEditorOpen(true)}
+              >
+                Edit Avatar
+              </button>
+              <Link to="/account/edit" className="btn btn-secondary dashboard-profile-button">
+                View profile
+              </Link>
+            </div>
+          </section>
+
+          <section className="pixel-panel dashboard-next-quest">
+            <p className="eyebrow accent">Next destination</p>
+            <h2>{currentQuest.title}</h2>
+            <p>{currentQuest.description}</p>
+            <Link to={currentQuest.route} className="btn btn-primary">
+              Continue quest
             </Link>
-            <button type="button" className="btn btn-primary" onClick={handleLogout}>
-              Log out
-            </button>
-          </div>
+          </section>
         </aside>
-      </section>
+      </div>
+      {isAvatarEditorOpen && (
+        <AvatarEditor
+          userId={currentUser.id}
+          onClose={() => setIsAvatarEditorOpen(false)}
+          onSave={(savedAvatar) => {
+            setAvatar(savedAvatar);
+            setIsAvatarEditorOpen(false);
+          }}
+        />
+      )}
     </main>
   );
 }

@@ -1,11 +1,24 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { deleteAccount, getCurrentUser, updateAccount } from "../data/gameData";
+import AnimatedAvatar from "../components/AnimatedAvatar";
+import AvatarEditor from "../components/AvatarEditor";
+import { DEFAULT_AVATAR_ROW } from "../data/avatarAssets";
+import {
+  deleteAccount,
+  getAvatar,
+  getCurrentUser,
+  updateAccount,
+} from "../data/gameData";
 
 function EditAccount() {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(getCurrentUser());
+  const [avatar, setAvatar] = useState(() => getAvatar(currentUser?.id));
+  const [isAvatarEditorOpen, setIsAvatarEditorOpen] = useState(false);
+  const [isProfileAvatarAnimating, setIsProfileAvatarAnimating] = useState(false);
+  const profileAvatarTimerRef = useRef(null);
+  const profileAvatarTriggerRef = useRef(null);
   const [formValues, setFormValues] = useState({
     name: currentUser?.name ?? "",
     email: currentUser?.email ?? "",
@@ -13,7 +26,8 @@ function EditAccount() {
   });
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("error");
-  const [score, setScore] = useState(currentUser?.score ?? 0);
+
+  useEffect(() => () => window.clearTimeout(profileAvatarTimerRef.current), []);
 
   if (!currentUser) {
     return (
@@ -43,7 +57,7 @@ function EditAccount() {
       currentUser.id,
       nextEmail,
       nextPassword,
-      score,
+      currentUser.score ?? 0,
       formValues.name.trim() || currentUser.name
     );
 
@@ -58,27 +72,6 @@ function EditAccount() {
     setMessage("Your account details were saved.");
   };
 
-  const handleResetScore = () => {
-    const updatedUser = updateAccount(
-      currentUser.id,
-      currentUser.email,
-      currentUser.password,
-      0,
-      currentUser.name
-    );
-
-    if (!updatedUser) {
-      setMessageType("error");
-      setMessage("That email address is already associated with another account.");
-      return;
-    }
-
-    setCurrentUser(updatedUser);
-    setScore(0);
-    setMessageType("success");
-    setMessage("Your score has been reset.");
-  };
-
   const handleDeleteAccount = () => {
     if (!window.confirm("Delete your account and saved progress? This cannot be undone.")) {
       return;
@@ -89,6 +82,29 @@ function EditAccount() {
     }
   };
 
+  const startProfileAvatarTapAnimation = () => {
+    window.clearTimeout(profileAvatarTimerRef.current);
+    setIsProfileAvatarAnimating(true);
+    profileAvatarTimerRef.current = window.setTimeout(() => {
+      if (profileAvatarTriggerRef.current === document.activeElement) {
+        profileAvatarTriggerRef.current.blur();
+      } else {
+        setIsProfileAvatarAnimating(false);
+      }
+    }, 720);
+  };
+
+  const handleProfileAvatarPointerDown = (event) => {
+    if (event.pointerType === "touch") {
+      startProfileAvatarTapAnimation();
+    }
+  };
+
+  const stopProfileAvatarAnimation = () => {
+    window.clearTimeout(profileAvatarTimerRef.current);
+    setIsProfileAvatarAnimating(false);
+  };
+
   return (
     <main className="container py-5">
       <div className="pixel-panel account-shell">
@@ -97,7 +113,43 @@ function EditAccount() {
             <p className="eyebrow accent">Account settings</p>
             <h1 className="pixel-heading md">Edit your profile</h1>
           </div>
-          <div className="profile-badge">{(currentUser.name || "A").slice(0, 2).toUpperCase()}</div>
+          <div className="account-avatar-actions">
+            <button
+              ref={profileAvatarTriggerRef}
+              type="button"
+              className="account-avatar-trigger"
+              aria-label="Animate profile avatar"
+              onPointerEnter={(event) => {
+                if (event.pointerType !== "touch") {
+                  setIsProfileAvatarAnimating(true);
+                }
+              }}
+              onPointerLeave={(event) => {
+                if (event.pointerType !== "touch") {
+                  stopProfileAvatarAnimation();
+                }
+              }}
+              onPointerDown={handleProfileAvatarPointerDown}
+              onTouchStart={startProfileAvatarTapAnimation}
+              onFocus={() => setIsProfileAvatarAnimating(true)}
+              onBlur={stopProfileAvatarAnimation}
+            >
+              <AnimatedAvatar
+                className="profile-badge"
+                spriteId={avatar?.spriteId}
+                row={avatar?.row ?? DEFAULT_AVATAR_ROW}
+                animate={isProfileAvatarAnimating}
+                size={64}
+              />
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary account-edit-avatar-button"
+              onClick={() => setIsAvatarEditorOpen(true)}
+            >
+              Edit Avatar
+            </button>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form account-form">
@@ -132,13 +184,6 @@ function EditAccount() {
             onChange={handleChange}
           />
 
-          <div className="inline-actions">
-            <p className="form-label">Score: {score}</p>
-            <button type="button" className="btn btn-secondary" onClick={handleResetScore}>
-              Reset score
-            </button>
-          </div>
-
           {message ? <p className={`form-message ${messageType}`}>{message}</p> : null}
 
           <div className="inline-actions">
@@ -154,6 +199,16 @@ function EditAccount() {
           </button>
         </form>
       </div>
+      {isAvatarEditorOpen && (
+        <AvatarEditor
+          userId={currentUser.id}
+          onClose={() => setIsAvatarEditorOpen(false)}
+          onSave={(savedAvatar) => {
+            setAvatar(savedAvatar);
+            setIsAvatarEditorOpen(false);
+          }}
+        />
+      )}
     </main>
   );
 }
