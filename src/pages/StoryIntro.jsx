@@ -41,14 +41,13 @@ const OUTSIDE_DOORS = [
   },
 ];
 
-// Inside scene. x = door center (% of stage width). src = PNG you drop into /public/lobby.
+// src = PNG you drop into /public/lobby (oh wait, this is my job - WafflesFox)
 const INSIDE_DOORS = [
   { id: "account", label: "Edit Account", x: 20, src: "/lobby/door-account.png" },
   { id: "quest", label: "Quest", x: 50, src: "/lobby/door-quest.png" },
   { id: "exit", label: "Exit", x: 80, src: "/lobby/door-exit.png" },
 ];
 
-// Your own characters. Add more entries to place more.
 // x / y = feet position (% of stage). src = PNG you drop into /public/lobby.
 const CHARACTERS = [
   {
@@ -112,7 +111,7 @@ function StoryIntro() {
 
   const posRef = useRef(SPAWN.outside);
   const keysRef = useRef(new Set());
-  const targetRef = useRef(null); // click/tap-to-walk destination
+  const targetRef = useRef(null); // click/tap-to-walk destination (its neat)
   const stageRef = useRef(null);
 
   const inside = scene === "inside";
@@ -121,7 +120,7 @@ function StoryIntro() {
   const plumberUnlocked = completed.includes("village-beneath-water");
   const plumberDone = completed.includes("windmills-secret");
   const labDone = completed.includes("sunken-cargo");
-  const labInvite = plumberDone && !labDone; // the lab assistant steps outside to invite you
+  const labInvite = plumberDone && !labDone; // the lab assistant steps outside to invite you yayy :3
 
   const doors = inside
     ? INSIDE_DOORS
@@ -344,7 +343,7 @@ function StoryIntro() {
           </button>
         ))}
 
-        {/* Your characters (placeholder PNGs) */}
+        {/* Your characters (placeholder PNGs) Reminder to myself because im stupid*/}
         {characters.map((c) => (
           <div
             key={c.id}
