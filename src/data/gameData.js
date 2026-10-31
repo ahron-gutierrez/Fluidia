@@ -222,3 +222,31 @@ export function getQuestById(id) {
 export function getQuestProgressLabel(progress) {
   return `${progress.completedQuests.length}/${QUESTS.length} quests solved`;
 }
+
+// ----- Quest scoring -----
+export const SCORE_RULES = { completion: 100, perRound: 50, firstTryBonus: 50 };
+
+export function calculateQuestScore(totalRounds, firstTryRounds) {
+  const rounds = totalRounds * SCORE_RULES.perRound;
+  const bonus = firstTryRounds * SCORE_RULES.firstTryBonus;
+  return {
+    completion: SCORE_RULES.completion,
+    rounds,
+    bonus,
+    total: SCORE_RULES.completion + rounds + bonus,
+  };
+}
+
+// Adds points to the account's total score. Returns { before, after } or null.
+export function addScore(userId, points) {
+  const current = getCurrentUser();
+  const users = getUsers();
+  const base = users.find((u) => u.id === userId) ?? (current?.id === userId ? current : null);
+  if (!base) return null;
+
+  const before = base.score ?? 0;
+  const after = before + points;
+  setUsers(users.map((u) => (u.id === userId ? { ...u, score: after } : u)));
+  if (current?.id === userId) setCurrentUser({ ...current, score: after });
+  return { before, after };
+}

@@ -142,15 +142,11 @@ label {
 }
 
 .page-shell {
-  min-height: 100vh;
-  background: linear-gradient(180deg, rgba(16, 34, 37, 0.35) 0%, rgba(7, 13, 24, 0.15) 100%);
-}
-
-.page-shell:has(.landing-page) {
   display: flex;
-  min-height: 100vh;
-  min-height: 100dvh;
   flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh; /* keeps the footer at the bottom, even on mobile browsers */
+  background: linear-gradient(180deg, rgba(16, 34, 37, 0.35) 0%, rgba(7, 13, 24, 0.15) 100%);
 }
 
 .page-shell:has(.landing-page) > .page-main {
@@ -1885,6 +1881,7 @@ label {
 }
 
 .site-footer {
+  flex-shrink: 0;
   border-top: 4px solid var(--border);
   background: rgba(241, 228, 187, 0.9);
 }
@@ -1894,7 +1891,7 @@ label {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  padding: 1rem 0;
+  padding: 1rem 0.75rem; /* keep the container's side padding */
   font-weight: 700;
   color: rgba(27, 45, 47, 0.9);
 }

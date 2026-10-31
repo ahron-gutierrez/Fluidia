@@ -3,13 +3,14 @@ import { Link } from "react-router-dom";
 
 import AnimatedAvatar from "../components/AnimatedAvatar";
 import AvatarEditor from "../components/AvatarEditor";
+import FluidiaMap from "../components/FluidiaMap";
+import LocationInfo from "../components/LocationInfo";
 import { DEFAULT_AVATAR_ROW } from "../data/avatarAssets";
 import {
   QUESTS,
   getAvatar,
   getCurrentUser,
   getProgress,
-  getQuestById,
   getQuestProgressLabel,
 } from "../data/gameData";
 
@@ -17,6 +18,7 @@ function Dashboard() {
   const currentUser = getCurrentUser();
   const [avatar, setAvatar] = useState(() => getAvatar(currentUser?.id));
   const [isAvatarEditorOpen, setIsAvatarEditorOpen] = useState(false);
+  const [mapLocation, setMapLocation] = useState(null);
 
   if (!currentUser) {
     return (
@@ -34,7 +36,6 @@ function Dashboard() {
 
   const progress = getProgress(currentUser.id);
   const completedQuests = progress.completedQuests ?? [];
-  const currentQuest = getQuestById(progress.currentQuest || QUESTS[0].id);
   const completedCount = completedQuests.length;
   const progressPercent = Math.round((completedCount / QUESTS.length) * 100);
 
@@ -58,8 +59,8 @@ function Dashboard() {
       </section>
 
       <div className="dashboard-main-grid">
-        <section className="pixel-panel fluidia-map-panel" aria-label="Fluidia map placeholder">
-          <div className="fluidia-map-placeholder" aria-hidden="true" />
+        <section className="pixel-panel fluidia-map-panel" aria-label="Fluidia map">
+          <FluidiaMap userId={currentUser.id} spriteId={avatar?.spriteId} onNearbyChange={setMapLocation} />
         </section>
 
         <aside className="dashboard-sidebar">
@@ -102,14 +103,7 @@ function Dashboard() {
             </div>
           </section>
 
-          <section className="pixel-panel dashboard-next-quest">
-            <p className="eyebrow accent">Next destination</p>
-            <h2>{currentQuest.title}</h2>
-            <p>{currentQuest.description}</p>
-            <Link to={currentQuest.route} className="btn btn-primary">
-              Continue quest
-            </Link>
-          </section>
+          <LocationInfo location={mapLocation} />
         </aside>
       </div>
       {isAvatarEditorOpen && (

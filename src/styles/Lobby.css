@@ -1,0 +1,216 @@
+.lobby-stage {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  aspect-ratio: 16 / 9;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 4px solid var(--border);
+  background: linear-gradient(180deg, #a2d9d8 0%, #dce7d2 55%, #8a7a5a 55%, #6b5b3e 100%);
+  touch-action: none;
+  user-select: none;
+  cursor: pointer;
+}
+
+.sprite-slot-img {
+  display: block;
+  image-rendering: pixelated;
+}
+
+.sprite-slot-placeholder {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border: 3px dashed var(--border);
+  background: rgba(255, 255, 255, 0.35);
+  color: var(--ink);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.lobby-background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lobby-stage > .sprite-slot-placeholder.lobby-background {
+  z-index: 0;
+  border-style: dashed;
+}
+
+.lobby-door {
+  position: absolute;
+  top: 8%;
+  width: 14%;
+  aspect-ratio: 2 / 3;
+  transform: translateX(-50%);
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.lobby-door-sprite {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.lobby-door-label {
+  position: absolute;
+  left: 50%;
+  bottom: -1.6rem;
+  transform: translateX(-50%);
+  padding: 0.1rem 0.5rem;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  background: var(--panel);
+  border: 2px solid var(--border);
+  color: var(--ink);
+}
+
+.lobby-door.is-near {
+  filter: drop-shadow(0 0 8px var(--amber));
+}
+
+.lobby-avatar {
+  position: absolute;
+  width: 96px;
+  height: 96px;
+  transform: translate(-50%, -100%); /* feet sit at the (x, y) point */
+  pointer-events: none;
+}
+
+.lobby-prompt {
+  position: absolute;
+  left: 50%;
+  bottom: 3%;
+  transform: translateX(-50%);
+  z-index: 200;
+  padding: 0.4rem 0.8rem;
+  background: var(--panel);
+  border: 3px solid var(--border);
+  color: var(--ink);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.lobby-help {
+  margin: 0.75rem 0 0;
+  text-align: center;
+  opacity: 0.85;
+}
+
+@media (max-width: 600px) {
+  .lobby-avatar {
+    width: 64px;
+    height: 64px;
+  }
+  .lobby-avatar .avatar-sprite {
+    transform: scale(0.67);
+    transform-origin: top left;
+  }
+}
+
+.lobby-character {
+  position: absolute;
+  width: 96px;
+  height: 96px;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+}
+
+.lobby-character-sprite {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.lobby-speech {
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 220px;
+  margin-bottom: 0.3rem;
+  padding: 0.3rem 0.6rem;
+  background: var(--panel);
+  border: 2px solid var(--border);
+  color: var(--ink);
+  font-size: 0.75rem;
+}
+
+.lobby-door-large {
+  top: 14%;
+  width: 32%;
+  aspect-ratio: 1 / 1;
+}
+
+/* Castle transition: black curtain scrolls down over the whole screen */
+.lobby-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: grid;
+  place-items: center;
+  background: #000;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+}
+
+.lobby-curtain.phase-cover {
+  animation: lobby-curtain-in 0.8s;
+}
+
+.lobby-curtain.phase-welcome {
+  transform: translateY(0);
+}
+
+.lobby-curtain.phase-reveal {
+  animation: lobby-curtain-out 0.8s;
+}
+
+.lobby-welcome {
+  color: #fff;
+  font-size: clamp(2rem, 7vw, 4.5rem);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  animation: lobby-welcome-text 1.8s ease-in-out forwards;
+}
+
+@keyframes lobby-curtain-in {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes lobby-curtain-out {
+  from { transform: translateY(0); }
+  to { transform: translateY(100%); }
+}
+
+@keyframes lobby-welcome-text {
+  0% { opacity: 0; }
+  30%, 70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.lobby-door-house { top: 24%; width: 17%; aspect-ratio: 1 / 1; }
+.lobby-door.is-locked .lobby-door-sprite { filter: grayscale(1) brightness(0.6); }
+.lobby-door.is-locked { cursor: not-allowed; }
+.lobby-door.is-new { animation: lobby-door-glow 1.4s ease-in-out infinite alternate; }
+@keyframes lobby-door-glow {
+  from { filter: drop-shadow(0 0 2px var(--amber)); }
+  to { filter: drop-shadow(0 0 14px var(--amber)); }
+}
+
+.lobby-character.is-arriving { animation: lobby-arrive 1s ease-out both; }
+@keyframes lobby-arrive {
+  from { opacity: 0; transform: translate(calc(-50% + 90px), -100%); }
+  to { opacity: 1; transform: translate(-50%, -100%); }
+}

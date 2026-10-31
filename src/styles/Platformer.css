@@ -1,0 +1,35 @@
+.plat-hud {
+  display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  margin-bottom: 0.5rem; padding: 0.5rem 0.8rem; background: #fff; color: var(--ink);
+  border: 3px solid var(--border); font-size: 0.9rem;
+}
+.plat-hud-item { text-align: right; min-width: 10rem; }
+
+.plat-wrap { position: relative; width: 100%; max-width: 800px; margin: 0 auto; overflow: hidden; border: 3px solid var(--border); background: #9fb1ab; }
+.plat-world { position: absolute; left: 0; top: 0; transform-origin: top left; background: linear-gradient(180deg, #cfd8d3, #9fb1ab); }
+.plat-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.plat-bg.sprite-slot-placeholder { opacity: 0.45; }
+
+.plat-floor { position: absolute; background: #6b5b3e; border-top: 6px solid #8a7a5a; }
+.plat-plank { position: absolute; background: #8a7a5a; border: 2px solid #3b2f1e; }
+.plat-tank { position: absolute; overflow: hidden; border: 3px solid #e3f2f7; border-top: 0; }
+.plat-tank canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+
+.plat-item {
+  position: absolute; width: 36px; height: 36px; display: grid; place-items: center;
+  border: 3px solid #253d43; font-size: 1.1rem; box-sizing: border-box;
+}
+.plat-item.held { box-shadow: 0 0 0 3px var(--amber); }
+.plat-item.floating, .plat-item.sunk { transition: top 0.7s ease-out; }
+.plat-item.floating { animation: plat-bob 1.4s ease-in-out infinite alternate; }
+.plat-item.sunk { opacity: 0.8; }
+.plat-item-tag {
+  position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); padding: 0 4px;
+  font-size: 11px; background: #fff; border: 2px solid #253d43; color: #253d43; white-space: nowrap;
+}
+@keyframes plat-bob { from { margin-top: -2px; } to { margin-top: 2px; } }
+
+.plat-player { position: absolute; width: 56px; height: 56px; pointer-events: none; }
+.plat-help { margin: 0.5rem 0 0; text-align: center; opacity: 0.85; font-size: 0.85rem; }
+
+@media (prefers-reduced-motion: reduce) { .plat-item.floating { animation: none; } }

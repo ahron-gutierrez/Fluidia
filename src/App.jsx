@@ -10,6 +10,9 @@ import NotFound from "./pages/NotFound";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import StoryIntro from "./pages/StoryIntro";
+import QuestHydrostatic from "./pages/QuestHydrostatic";
+import PlumberHouse from "./pages/PlumberHouse";
+import LaboratoryQuest from "./pages/LaboratoryQuest";
 
 import Overview from "./features/Overview";
 import FluidsPage from "./features/01_fluids/page";
@@ -28,6 +31,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/intro" element={<StoryIntro />} />
+          <Route path="/quest/hydrostatic-pressure" element={<QuestHydrostatic />} />
+          <Route path="/quest/plumber-house" element={<PlumberHouse />} />
+          <Route path="/quest/laboratory" element={<LaboratoryQuest />} />
           <Route path="/account/edit" element={<EditAccount />} />
           <Route path="/login" element={<Login />} />
           <Route path="/overview" element={<Overview />} />

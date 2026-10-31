@@ -1,0 +1,33 @@
+.summary-overlay {
+  position: fixed; inset: 0; z-index: 5500; overflow-y: auto;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 1rem; background: rgba(2, 6, 23, 0.92); animation: summary-fade 0.5s ease-out both;
+}
+.summary-hero {
+  position: relative; z-index: 2; margin-bottom: -56px; /* overlaps the card */
+  animation: summary-hero-in 0.9s cubic-bezier(0.2, 1.4, 0.4, 1) both, summary-bob 1s 0.9s ease-in-out infinite alternate;
+}
+.summary-card { position: relative; z-index: 1; width: min(460px, 94vw); padding: 3.8rem 1.4rem 1.4rem; text-align: center; }
+.summary-row {
+  display: flex; justify-content: space-between; gap: 1rem; padding: 0.35rem 0;
+  border-bottom: 2px dashed var(--border); animation: summary-row-in 0.4s ease-out both;
+}
+.summary-total { margin-top: 0.8rem; animation: summary-row-in 0.5s ease-out both; }
+.summary-total-number { font-size: 2.6rem; font-weight: bold; color: var(--forest-dark); line-height: 1.1; }
+
+.summary-confetti { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.summary-confetti span {
+  position: absolute; top: -12px; width: 10px; height: 10px;
+  animation: summary-fall 3s linear infinite;
+}
+
+@keyframes summary-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes summary-hero-in { from { transform: translateY(80vh); } to { transform: translateY(0); } }
+@keyframes summary-bob { from { transform: translateY(0); } to { transform: translateY(-14px); } }
+@keyframes summary-row-in { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes summary-fall { to { transform: translateY(105vh) rotate(540deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .summary-confetti { display: none; }
+  .summary-hero { animation: none; }
+}
