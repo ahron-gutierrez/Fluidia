@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { getCurrentUser, getProgress, login, setCurrentUser } from "../data/gameData";
+import { getCurrentUser, getProgress, login } from "../data/gameData";
 
 function Login() {
   const navigate = useNavigate();
@@ -13,17 +13,17 @@ function Login() {
     setFormValues((current) => ({ ...current, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setMessage("");
 
-    const foundUser = login(formValues.email, formValues.password);
+    const { user: foundUser, message: errorMessage } = await login(formValues.email, formValues.password);
 
     if (!foundUser) {
-      setMessage("We could not find a matching account. Try again or sign up.");
+      setMessage(errorMessage);
       return;
     }
 
-    setCurrentUser(foundUser);
     const progress = getProgress(foundUser.id);
     navigate(progress.introCompleted ? "/dashboard" : "/intro");
   };

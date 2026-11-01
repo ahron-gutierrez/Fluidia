@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import AnimatedAvatar from "./AnimatedAvatar";
 import SpriteSlot from "./SpriteSlot";
 import { AVATAR_POSES, DEFAULT_AVATAR_ID } from "../data/avatarAssets";
+import { getMapVisited, setMapVisited } from "../data/gameData";
 import { MAP_LOCATIONS } from "../data/mapLocations";
 import "../styles/Map.css";
 
@@ -17,21 +18,13 @@ const ASPECT = 1.6; // map is 16:10, so x% is wider than y%
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 const distance = (a, b) => Math.hypot((a.x - b.x) * ASPECT, a.y - b.y);
 
-const loadVisited = (userId) => {
-  try {
-    return JSON.parse(localStorage.getItem(`fluidia-map-visited-${userId}`)) ?? [];
-  } catch {
-    return [];
-  }
-};
-
 function FluidiaMap({ userId, spriteId, onNearbyChange }) {
   const sprite = spriteId ?? DEFAULT_AVATAR_ID;
 
   const [pos, setPos] = useState({ x: 50, y: 48 });
   const [walking, setWalking] = useState(false);
   const [facingLeft, setFacingLeft] = useState(false);
-  const [visited, setVisited] = useState(() => loadVisited(userId));
+  const [visited, setVisited] = useState(() => getMapVisited(userId));
 
   const posRef = useRef(pos);
   const keysRef = useRef(new Set());
@@ -52,11 +45,7 @@ function FluidiaMap({ userId, spriteId, onNearbyChange }) {
     if (!nearby || visited.includes(nearby.id)) return;
     const next = [...visited, nearby.id];
     setVisited(next);
-    try {
-      localStorage.setItem(`fluidia-map-visited-${userId}`, JSON.stringify(next));
-    } catch {
-      /* ignore */
-    }
+    setMapVisited(userId, next);
   }, [nearby, visited, userId]);
 
   // Keyboard: arrows / WASD.

@@ -6,7 +6,6 @@ import {
   addAccount,
   getCurrentUser,
   getProgress,
-  setCurrentUser,
   setProgress,
 } from "../data/gameData";
 
@@ -20,7 +19,7 @@ function Signup() {
     setFormValues((current) => ({ ...current, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const trimmedName = formValues.name.trim();
@@ -31,13 +30,17 @@ function Signup() {
       return;
     }
 
-    const newUser = addAccount(trimmedEmail, formValues.password, 0, trimmedName);
+    const { user: newUser, message: errorMessage } = await addAccount(
+      trimmedEmail,
+      formValues.password,
+      0,
+      trimmedName
+    );
     if (!newUser) {
-      setMessage("An account already exists with that email address.");
+      setMessage(errorMessage);
       return;
     }
 
-    setCurrentUser(newUser);
     setProgress(newUser.id, { ...DEFAULT_PROGRESS, introCompleted: false });
 
     const progress = getProgress(newUser.id);

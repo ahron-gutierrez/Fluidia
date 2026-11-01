@@ -48,37 +48,40 @@ function EditAccount() {
     setFormValues((current) => ({ ...current, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const nextEmail = formValues.email.trim() || currentUser.email;
-    const nextPassword = formValues.password || currentUser.password;
-    const updatedUser = updateAccount(
+    const { user: updatedUser, message: errorMessage } = await updateAccount(
       currentUser.id,
       nextEmail,
-      nextPassword,
-      currentUser.score ?? 0,
+      formValues.password, // empty = keep the current password
       formValues.name.trim() || currentUser.name
     );
 
     if (!updatedUser) {
       setMessageType("error");
-      setMessage("That email address is already associated with another account.");
+      setMessage(errorMessage);
       return;
     }
 
     setCurrentUser(updatedUser);
+    setFormValues((current) => ({ ...current, password: "" }));
     setMessageType("success");
     setMessage("Your account details were saved.");
   };
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     if (!window.confirm("Delete your account and saved progress? This cannot be undone.")) {
       return;
     }
 
-    if (deleteAccount(currentUser.id)) {
+    const result = await deleteAccount(currentUser.id);
+    if (result.ok) {
       navigate("/");
+    } else {
+      setMessageType("error");
+      setMessage(result.message);
     }
   };
 
