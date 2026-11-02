@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 import { QUESTS, getCurrentUser, getProgress, setProgress } from "../../data/gameData";
 import ArchimedesSimulation from "./simulation";
@@ -37,6 +38,9 @@ function ArchimedesPage() {
           Archimedes' principle states that an immersed object experiences an upward
           force equal to the weight of the fluid it displaces.
         </p>
+        <Link to="/sandbox/archimedes" className="btn btn-primary mt-2">
+          Open sandbox
+        </Link>
       </div>
 
       <div className="quest-layout-grid">

@@ -32,6 +32,11 @@ const PLATFORMS = [
   { x: 340, y: 235, w: 75 },
 ];
 const SPAWN = { x: 60, y: 320 };
+// Sandbox shows all 8 objects at once, in a fixed order
+const SANDBOX_SLOTS = [
+  { x: 60, y: 320 }, { x: 130, y: 320 }, { x: 200, y: 320 }, { x: 270, y: 320 }, { x: 340, y: 320 },
+  { x: 95, y: 235 }, { x: 255, y: 180 }, { x: 377, y: 235 },
+];
 const SLOTS = [
   { x: 110, y: 320 }, { x: 320, y: 320 }, { x: 95, y: 235 }, { x: 255, y: 180 }, { x: 377, y: 235 },
 ];
@@ -60,6 +65,7 @@ const shuffle = (arr) => {
 // round = { fluid: {name, rho, color}, target, right, decoys }
 function BuoyancyPlatformer({ round, spriteId, solved, onResult }) {
   const [layout] = useState(() => {
+    if (round.sandbox) return round.items.map((id, i) => ({ id, ...MATERIALS[id], home: SANDBOX_SLOTS[i] }));
     const slots = shuffle(SLOTS);
     return shuffle([round.right, ...round.decoys]).map((id, i) => ({ id, ...MATERIALS[id], home: slots[i] }));
   });
@@ -128,7 +134,15 @@ function BuoyancyPlatformer({ round, spriteId, solved, onResult }) {
       const hit = toScreen(it.x, SURFACE);
       fx.splash(hit.x, hit.y, round.fluid.color);
       if (sinks) fx.bubbles(hit.x, hit.y + 20, 10);
-      const good = !sinks && Math.abs(frac - round.target) <= TOLERANCE;
+      const good = !round.sandbox && !sinks && Math.abs(frac - round.target) <= TOLERANCE;
+      if (round.sandbox) {
+        // free play: no right or wrong, the object just goes back after a moment
+        g.pose = { name: sinks ? "Shocked" : "Jump", until: now + 700 };
+        timers.push(setTimeout(() => sendBack(it), 3200));
+        if (!sinks) fx.sparkle(hit.x, hit.y - 10, ["#f0cd86", "#fff"]);
+        resultRef.current({ name: it.name, rho: it.rho, frac, sinks, good: false });
+        return;
+      }
       playSfx(good ? "correct" : "wrong");
       if (good) {
         const top = toScreen(it.x, SURFACE - 30);
@@ -259,20 +273,24 @@ function BuoyancyPlatformer({ round, spriteId, solved, onResult }) {
     };
   }, [layout, round]);
 
-  const { fluid, target } = round;
+  const { fluid, target, sandbox } = round;
 
   return (
     <div>
       <div className="plat-hud">
         <div>
           <strong>{fluid.name}</strong> · ρ = {fluid.rho} kg/m³
-          <div>Goal: find the object that floats with about <strong>{Math.round(target * 100)}%</strong> of its volume underwater.</div>
+          {sandbox ? (
+            <div>Free play: pick up any object with <strong>E</strong> and drop it over the tank.</div>
+          ) : (
+            <div>Goal: find the object that floats with about <strong>{Math.round(target * 100)}%</strong> of its volume underwater.</div>
+          )}
         </div>
         <div className="plat-hud-item">
           {snap?.near ? (
             <>
               {snap.heldId ? "Holding" : "Near"}: <strong>{snap.near.name}</strong>
-              <div>ρ = {snap.near.rho} kg/m³</div>
+              <div>ρ = {snap.near.rho} kg/m³{sandbox ? ` · SG ${(snap.near.rho / 1000).toFixed(2)}` : ""}</div>
             </>
           ) : (
             <span>Walk up to an object to inspect it.</span>

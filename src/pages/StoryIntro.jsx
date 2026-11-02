@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import AnimatedAvatar from "../components/AnimatedAvatar";
 import SpriteSlot from "../components/SpriteSlot";
@@ -20,7 +20,9 @@ const NEAR_DISTANCE = 9; // how close (in % x) you must be to a door
 
 // Where you appear in each scene (% of stage).
 const SPAWN = {
-  outside: { x: 10, y: 84 }, // story starts outside the castle
+  outside: { x: 10, y: 84 },
+  exit: { x: 38, y: 80 }, // just outside the castle gate, after leaving through the Exit door
+  account: { x: 20, y: 68 }, // in front of the Edit Account door, after leaving that page // story starts outside the castle
   inside: { x: 50, y: 88 }, // just inside the entrance
 };
 
@@ -53,11 +55,11 @@ const INSIDE_DOORS = [
 const CHARACTERS = [
   {
     id: "custom",
-    name: "Your Character",
+    name: "Waffles Fox",
     x: 32,
     y: 78,
     src: "/lobby/character.png",
-    line: "Hello! Edit my line in CHARACTERS.",
+    line: "Hello! This is our Final Project for Calphy! Enjoy!",
   },
   {
     id: "guide",
@@ -85,13 +87,17 @@ const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
 function StoryIntro() {
   const navigate = useNavigate();
+  const location = useLocation();
   const currentUser = getCurrentUser();
+
+  // Coming back from the Edit Account page: stand in front of that door, inside the castle.
+  const cameFromAccount = location.state?.spawn === "account";
 
   const avatar = currentUser ? getAvatar(currentUser.id) : null;
   const spriteId = avatar?.spriteId ?? DEFAULT_AVATAR_ID;
 
-  const [scene, setScene] = useState("outside"); // "outside" | "inside"
-  const [pos, setPos] = useState(SPAWN.outside);
+  const [scene, setScene] = useState(cameFromAccount ? "inside" : "outside"); // "outside" | "inside"
+  const [pos, setPos] = useState(cameFromAccount ? SPAWN.account : SPAWN.outside);
   const [walking, setWalking] = useState(false);
   const [facingLeft, setFacingLeft] = useState(false);
 
@@ -110,7 +116,7 @@ function StoryIntro() {
     return () => timers.forEach(clearTimeout);
   }, []);
 
-  const posRef = useRef(SPAWN.outside);
+  const posRef = useRef(cameFromAccount ? SPAWN.account : SPAWN.outside);
   const keysRef = useRef(new Set());
   const targetRef = useRef(null); // click/tap-to-walk destination
   const stageRef = useRef(null);
@@ -169,9 +175,23 @@ function StoryIntro() {
         goToPhase("cover"); // same curtain, then walk into the house
         timersRef.current.push(setTimeout(() => navigate(door.route), CURTAIN_MS));
       } else if (door.id === "exit") {
-        navigate("/");
+        targetRef.current = null;
+        keysRef.current.clear();
+        setWalking(false);
+        goToPhase("cover"); // curtain falls, you reappear outside the castle gate
+        timersRef.current.push(
+          setTimeout(() => {
+            posRef.current = SPAWN.exit;
+            setPos(SPAWN.exit);
+            setScene("outside");
+            goToPhase("reveal");
+          }, CURTAIN_MS),
+          setTimeout(() => goToPhase(null), CURTAIN_MS * 2),
+        );
       } else if (door.id === "account") {
-        navigate("/account/edit");
+        // remember where we left from, so Back (button or browser) returns to this door
+        navigate("/intro", { replace: true, state: { spawn: "account" } });
+        navigate("/account/edit", { state: { fromLobby: true } });
       } else if (door.id === "quest") {
         navigate("/quest/hydrostatic-pressure");
       }

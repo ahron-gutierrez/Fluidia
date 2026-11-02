@@ -1,0 +1,247 @@
+/* ============================================================================
+   Pixel theme: loaded after index.css, so it restyles the whole UI in one place.
+   Pixel fonts, bevelled press-down buttons, pixel form controls, segmented bars,
+   a starry background and stepped (retro) animation. Delete this import in
+   main.jsx to go back to the old look.
+   ============================================================================ */
+
+:root {
+  --font-pixel: "Press Start 2P", "Courier New", monospace;
+  --font-body: "Pixelify Sans", "Trebuchet MS", sans-serif;
+  --bevel-light: rgba(255, 255, 255, 0.4);
+  --bevel-dark: rgba(0, 0, 0, 0.2);
+}
+
+/* ---------- type ---------- */
+body,
+button,
+input,
+select,
+textarea,
+label {
+  font-family: var(--font-body);
+}
+
+body {
+  font-size: 1.08rem;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+}
+
+.pixel-heading,
+.brand-mark,
+.hero-title {
+  font-family: var(--font-pixel);
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.18);
+}
+
+.pixel-heading { letter-spacing: 0.04em; }
+.eyebrow { font-family: var(--font-body); font-weight: 700; letter-spacing: 0.2em; }
+p, li { text-wrap: pretty; }
+
+a { text-decoration-style: dotted; text-underline-offset: 3px; }
+::selection { background: var(--amber); color: var(--ink); }
+
+/* ---------- background: faint pixel stars behind everything ---------- */
+body {
+  background-color: #020617;
+  background-image:
+    radial-gradient(#ffffff 1px, transparent 1.5px),
+    radial-gradient(#4ca9c7 1px, transparent 1.5px),
+    radial-gradient(#f0cd86 1px, transparent 1.5px);
+  background-size: 96px 96px, 144px 144px, 200px 200px;
+  background-position: 0 0, 48px 70px, 120px 30px;
+  background-attachment: fixed;
+}
+
+/* ---------- panels and cards: bevelled edges + hard shadow ---------- */
+.pixel-panel,
+.stat-box,
+.quest-card,
+.alert-panel {
+  box-shadow:
+    inset 4px 4px 0 var(--bevel-light),
+    inset -4px -4px 0 var(--bevel-dark),
+    8px 8px 0 var(--shadow);
+}
+
+.stat-box { box-shadow: inset 4px 4px 0 var(--bevel-light), inset -4px -4px 0 var(--bevel-dark), 4px 4px 0 var(--shadow); }
+
+/* dark HUD-style panels on the dashboard keep their own look, but get a pixel inner edge */
+.dashboard-welcome-bar,
+.fluidia-map-panel,
+.dashboard-profile-panel,
+.dashboard-next-quest {
+  box-shadow: inset 4px 4px 0 rgba(255, 255, 255, 0.07), inset -4px -4px 0 rgba(0, 0, 0, 0.35), 6px 6px 0 #01040d;
+}
+
+/* ---------- buttons: bevel, hard shadow, press down ---------- */
+.btn {
+  font-family: var(--font-body);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  position: relative;
+  box-shadow:
+    inset 0 4px 0 var(--bevel-light),
+    inset 0 -6px 0 var(--bevel-dark),
+    4px 4px 0 var(--shadow);
+  transition: transform 0.12s steps(2, end), box-shadow 0.12s steps(2, end), filter 0.12s steps(2, end);
+}
+
+.btn:hover:not(:disabled):not(.disabled) {
+  transform: translate(-2px, -2px);
+  filter: brightness(1.08);
+  box-shadow:
+    inset 0 4px 0 var(--bevel-light),
+    inset 0 -6px 0 var(--bevel-dark),
+    6px 6px 0 var(--shadow);
+}
+
+.btn:active:not(:disabled):not(.disabled) {
+  transform: translate(4px, 4px);
+  box-shadow: inset 0 4px 0 var(--bevel-dark), 0 0 0 var(--shadow);
+}
+
+.btn:focus-visible { outline: 4px dashed var(--amber); outline-offset: 3px; }
+
+.btn-danger { background: var(--danger); border-color: var(--border); color: #fff; }
+.btn:disabled, .btn.disabled { filter: grayscale(0.7) brightness(0.9); opacity: 0.7; }
+
+/* ---------- form controls ---------- */
+.form-control,
+.form-select {
+  border: 4px solid var(--border);
+  border-radius: 0;
+  background-color: #fbf4dc;
+  color: var(--ink);
+  font-family: var(--font-body);
+  box-shadow: inset 4px 4px 0 rgba(0, 0, 0, 0.12);
+}
+
+.form-control::placeholder { color: rgba(27, 45, 47, 0.5); }
+
+.form-control:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--border);
+  background-color: #fffbe8;
+  box-shadow: inset 4px 4px 0 rgba(0, 0, 0, 0.12), 0 0 0 4px var(--amber);
+}
+
+input[type="checkbox"],
+input[type="radio"] { accent-color: var(--amber); width: 1.15rem; height: 1.15rem; }
+
+/* range slider: chunky track with tick marks, square thumb */
+.form-range { height: 2rem; background: transparent; }
+.form-range:focus { outline: none; }
+
+.form-range::-webkit-slider-runnable-track {
+  height: 14px; border: 4px solid var(--border); border-radius: 0;
+  background: repeating-linear-gradient(90deg, #fbf4dc 0 10px, #e9dcb0 10px 12px);
+  box-shadow: inset 0 3px 0 rgba(0, 0, 0, 0.15);
+}
+.form-range::-moz-range-track {
+  height: 6px; border: 4px solid var(--border); border-radius: 0;
+  background: repeating-linear-gradient(90deg, #fbf4dc 0 10px, #e9dcb0 10px 12px);
+}
+.form-range::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 22px; height: 30px; margin-top: -12px;
+  border: 4px solid var(--border); border-radius: 0; background: var(--amber);
+  box-shadow: inset 0 4px 0 var(--bevel-light), inset 0 -4px 0 var(--bevel-dark), 3px 3px 0 var(--shadow);
+}
+.form-range::-moz-range-thumb {
+  width: 14px; height: 22px; border: 4px solid var(--border); border-radius: 0; background: var(--amber);
+}
+.form-range:focus::-webkit-slider-thumb { background: #f0cd86; box-shadow: 0 0 0 3px var(--water); }
+
+.form-message { border-width: 4px; box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.15); }
+
+/* ---------- progress bars: segmented like a health bar ---------- */
+.progress-bar { border-width: 4px; height: 24px; }
+.progress-bar span {
+  position: relative;
+  background: linear-gradient(180deg, #7fe0f0 0 40%, #27a9f7 40% 100%);
+}
+.progress-bar span::after {
+  content: ""; position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg, transparent 0 14px, rgba(2, 6, 23, 0.55) 14px 16px);
+}
+
+/* ---------- top bar and footer ---------- */
+.topbar {
+  border-bottom: 4px solid #334155;
+  box-shadow: 0 4px 0 #0a1226;
+}
+
+.nav-links > a:not(.compact-btn):hover::before,
+.nav-links button:hover::before {
+  content: "▶";
+  position: absolute; left: -0.55rem; top: 50%; transform: translateY(-50%);
+  font-size: 0.55rem; color: var(--amber);
+  animation: pixel-blink 0.6s steps(2, end) infinite;
+}
+@keyframes pixel-blink { 50% { opacity: 0; } }
+
+.nav-links .lessons-menu-panel,
+.nav-links .profile-menu-panel {
+  border-width: 4px;
+  box-shadow: inset 4px 4px 0 var(--bevel-light), inset -4px -4px 0 var(--bevel-dark), 6px 6px 0 var(--shadow);
+}
+
+.site-footer {
+  border-top: 4px solid var(--border);
+  background-image: repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.05) 0 16px, transparent 16px 32px);
+  font-family: "Trebuchet MS", system-ui, sans-serif; /* the pixel font has no © glyph */
+}
+
+/* ---------- scrollbars ---------- */
+* { scrollbar-width: thin; scrollbar-color: var(--amber) #0a1226; }
+::-webkit-scrollbar { width: 14px; height: 14px; }
+::-webkit-scrollbar-track { background: #0a1226; border-left: 2px solid #1c2b4a; }
+::-webkit-scrollbar-thumb { background: var(--amber); border: 3px solid #0a1226; }
+::-webkit-scrollbar-thumb:hover { background: #f0cd86; }
+
+/* ---------- game UI pieces ---------- */
+.dressing-arrow,
+.lobby-door-label,
+.fluidia-pin-name,
+.lobby-prompt,
+.plat-hud,
+.plumber-speech,
+.quest-speech,
+.quest-feedback,
+.sandbox-readout,
+.hint-helper-bubble {
+  font-family: var(--font-body);
+}
+
+.plat-hud,
+.plumber-speech,
+.quest-speech,
+.quest-feedback,
+.sandbox-readout,
+.hint-helper-bubble,
+.lobby-prompt {
+  box-shadow: inset 3px 3px 0 rgba(255, 255, 255, 0.5), inset -3px -3px 0 rgba(0, 0, 0, 0.08), 4px 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+kbd {
+  font-family: var(--font-body);
+  border-radius: 0;
+  box-shadow: inset 0 -3px 0 rgba(255, 255, 255, 0.2), 2px 2px 0 #000;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn, .btn:hover, .btn:active { transition: none; }
+  .nav-links > a:hover::before, .nav-links button:hover::before { animation: none; }
+}
+
+/* panels that had no inner padding of their own */
+.account-shell { padding: 1.5rem; }
+.account-layout { margin-top: 0.5rem; }
+
+/* the pixel heading font is wide: keep long titles inside their panels */
+.pixel-heading.md { font-size: clamp(0.95rem, 1.6vw, 1.5rem); }

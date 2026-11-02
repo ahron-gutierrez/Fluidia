@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useState } from "react";
 
 function SpecificGravityPage() {
@@ -12,6 +13,9 @@ function SpecificGravityPage() {
         <p className="lead">
           Specific gravity is the ratio of a substance's density to the density of water.
         </p>
+        <Link to="/sandbox/specific-gravity" className="btn btn-primary mt-2">
+          Open sandbox
+        </Link>
       </div>
 
       <div className="quest-layout-grid">

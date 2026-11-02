@@ -44,7 +44,7 @@
 
 .lobby-door {
   position: absolute;
-  top: 8%;
+  top: 21%; /* the base of the doors sits on the castle floor line */
   width: 14%;
   aspect-ratio: 2 / 3;
   transform: translateX(-50%);

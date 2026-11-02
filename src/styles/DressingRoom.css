@@ -1,0 +1,58 @@
+.dressing-room { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.dressing-stage {
+  position: relative; aspect-ratio: 4 / 5; overflow: hidden;
+  border: 4px solid var(--border); background: #c7a0a0;
+  image-rendering: pixelated;
+}
+.dressing-wall {
+  position: absolute; inset: 0 0 28% 0;
+  background:
+    repeating-linear-gradient(90deg, #d9b8b0 0 16px, #cfa9a2 16px 32px);
+}
+.dressing-floor {
+  position: absolute; inset: 72% 0 0 0;
+  background: repeating-linear-gradient(90deg, #8a5a35 0 24px, #7a4d2c 24px 26px);
+  border-top: 4px solid #5c3a21;
+}
+.dressing-podium {
+  position: absolute; left: 50%; bottom: 8%; width: 62%; height: 9%; transform: translateX(-50%);
+  background: #f0cd86; border: 4px solid #d7a85f; box-shadow: 0 6px 0 #5c3a21;
+}
+.dressing-avatar {
+  position: absolute; left: 50%; bottom: 14%; transform: translateX(-50%);
+  filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.25));
+}
+
+.dressing-rod {
+  position: absolute; left: 0; right: 0; top: 0; height: 10px; z-index: 4;
+  background: #d7a85f; border-bottom: 4px solid #8a5a35;
+}
+
+/* Curtain: bunched up on the left when open, slides across when closed. Stepped = pixel motion. */
+.dressing-curtain {
+  position: absolute; left: 0; top: 0; bottom: 0; z-index: 3; width: 24%;
+  background: repeating-linear-gradient(90deg, #c46b5f 0 14px, #9c4a42 14px 20px, #b45c52 20px 30px);
+  border-right: 6px solid #6e2f29; box-shadow: 6px 0 0 rgba(0, 0, 0, 0.25);
+  transition: width 0.7s steps(10, end);
+}
+.dressing-curtain.closed { width: 100%; border-right: 0; }
+.dressing-tassel {
+  position: absolute; right: 8px; top: 46%; width: 8px; height: 40px; background: #d7a85f;
+  box-shadow: 0 0 0 3px #8a5a35;
+}
+.dressing-curtain.closed .dressing-tassel { display: none; }
+
+.dressing-controls { display: flex; align-items: center; justify-content: center; gap: 1rem; }
+.dressing-count { min-width: 8rem; text-align: center; }
+.dressing-arrow {
+  width: 3rem; height: 3rem; font-size: 1.2rem; cursor: pointer;
+  background: var(--amber); color: var(--ink); border: 4px solid var(--border);
+  box-shadow: 0 4px 0 #5c3a21;
+}
+.dressing-arrow:active { transform: translateY(3px); box-shadow: 0 1px 0 #5c3a21; }
+.dressing-note { margin: 0; text-align: center; font-size: 0.8rem; opacity: 0.8; }
+
+.account-layout { display: grid; grid-template-columns: minmax(230px, 300px) 1fr; gap: 1.5rem; align-items: start; }
+@media (max-width: 760px) { .account-layout { grid-template-columns: 1fr; } .dressing-stage { max-width: 320px; margin: 0 auto; width: 100%; } }
+@media (prefers-reduced-motion: reduce) { .dressing-curtain { transition-duration: 0.01s; } }

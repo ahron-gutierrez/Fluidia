@@ -13,6 +13,7 @@ import StoryIntro from "./pages/StoryIntro";
 import QuestHydrostatic from "./pages/QuestHydrostatic";
 import PlumberHouse from "./pages/PlumberHouse";
 import LaboratoryQuest from "./pages/LaboratoryQuest";
+import Sandbox from "./pages/Sandbox";
 
 import Overview from "./features/Overview";
 import FluidsPage from "./features/01_fluids/page";
@@ -34,6 +35,7 @@ function App() {
           <Route path="/quest/hydrostatic-pressure" element={<QuestHydrostatic />} />
           <Route path="/quest/plumber-house" element={<PlumberHouse />} />
           <Route path="/quest/laboratory" element={<LaboratoryQuest />} />
+          <Route path="/sandbox/:lessonId" element={<Sandbox />} />
           <Route path="/account/edit" element={<EditAccount />} />
           <Route path="/login" element={<Login />} />
           <Route path="/overview" element={<Overview />} />

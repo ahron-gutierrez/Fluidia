@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 import { QUESTS, getCurrentUser, getProgress, setProgress } from "../../data/gameData";
 import RateOfFlowSimulation from "./simulation";
@@ -37,6 +38,9 @@ function RateOfFlowPage() {
           In steady flow, changes in fluid speed are related to changes in pressure.
           Use the continuity equation and Bernoulli's principle to analyze moving fluids.
         </p>
+        <Link to="/sandbox/rate-of-flow" className="btn btn-primary mt-2">
+          Open sandbox
+        </Link>
       </div>
 
       <div className="quest-layout-grid">

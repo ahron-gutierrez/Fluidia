@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 import { QUESTS, getCurrentUser, getProgress, setProgress } from "../../data/gameData";
 
@@ -42,6 +43,9 @@ function DensityPage() {
           Hydrostatic pressure is the pressure exerted by a fluid at rest. Calculate
           how the pressure at a point depends on fluid density and depth.
         </p>
+        <Link to="/sandbox/pressure-density" className="btn btn-primary mt-2">
+          Open sandbox
+        </Link>
       </div>
 
       <div className="quest-layout-grid">

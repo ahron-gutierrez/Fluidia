@@ -5,21 +5,25 @@ const lessonLinks = [
     title: "Fluid Pressure and Density",
     description: "Explore how fluid pressure changes with depth and density.",
     path: "/fluids/pressure-density",
+    sandbox: "/sandbox/pressure-density",
   },
   {
     title: "Specific Gravity",
     description: "Compare a substance's density with the density of water.",
     path: "/fluids/specific-gravity",
+    sandbox: "/sandbox/specific-gravity",
   },
   {
     title: "Buoyancy and Archimedes' Principle",
     description: "Learn how displaced fluid creates buoyant force on an object.",
     path: "/fluids/archimedes",
+    sandbox: "/sandbox/archimedes",
   },
   {
     title: "Fluid Flow and Bernoulli's Principle",
     description: "Relate fluid speed, pressure, and cross-sectional area.",
     path: "/fluids/rate-of-flow",
+    sandbox: "/sandbox/rate-of-flow",
   },
 ];
 
@@ -42,6 +46,10 @@ function FluidsPage() {
             <p>{lesson.description}</p>
             <Link to={lesson.path} className="btn btn-primary">
               Study concept
+            </Link>
+            {" "}
+            <Link to={lesson.sandbox} className="btn btn-secondary">
+              Sandbox
             </Link>
           </div>
         ))}
