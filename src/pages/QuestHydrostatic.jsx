@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useBlocker } from "react-router-dom";
 
 import ConfirmLeave from "../components/ConfirmLeave";
@@ -7,6 +7,8 @@ import PixelWater from "../components/PixelWater";
 import RoundIntro from "../components/RoundIntro";
 import SpriteSlot from "../components/SpriteSlot";
 import { DEFAULT_AVATAR_ID } from "../data/avatarAssets";
+import * as fx from "../utils/pixelFx";
+import { playSfx } from "../utils/sfx";
 import QuestSummary from "../components/QuestSummary";
 import {
   addScore,
@@ -58,13 +60,34 @@ function DiveRound({ round, onResult }) {
   const correctDepth = (round.target * 1000) / (fluid.rho * G);
   const depthPct = (depth / round.maxDepth) * 100;
 
+  const lastBubble = useRef(0);
+  const floater = () => document.querySelector(".quest-sub");
+
+  const moveSlider = (value) => {
+    setDepth(value);
+    const now = performance.now();
+    const el = floater();
+    if (el && now - lastBubble.current > 110) {   // bubble trail while you dive
+      lastBubble.current = now;
+      const c = fx.centerOf(el);
+      fx.bubbles(c.x, c.y, 2);
+      if (Math.random() < 0.25) playSfx("pop", 0.3);
+    }
+  };
+
   const lock = () => {
+    const el = floater();
+    const c = el ? fx.centerOf(el) : null;
     const error = (pressure - round.target) / round.target;
     if (Math.abs(error) <= 0.05) {
       setSolved(true);
+      if (c) { fx.sparkle(c.x, c.y); fx.bubbles(c.x, c.y, 12); }
+      playSfx("correct");
       setFeedback({ ok: true, text: `Locked in! ${pressure.toFixed(0)} kPa at ${depth.toFixed(2)} m. The exact answer is ${correctDepth.toFixed(2)} m.` });
     } else {
       setFirstTry(false);
+      if (c) fx.puff(c.x, c.y, ["#c46b5f", "#9c4a42", "#f4e9c9"]);
+      playSfx("wrong");
       setFeedback({ ok: false, text: error > 0 ? "Too much pressure. You're too deep. Come up a bit." : "Not enough pressure. Dive deeper." });
     }
   };
@@ -95,7 +118,7 @@ function DiveRound({ round, onResult }) {
 
       <input
         type="range" className="form-range" min="0" max={round.maxDepth} step={round.step}
-        value={depth} disabled={solved} onChange={(e) => setDepth(Number(e.target.value))}
+        value={depth} disabled={solved} onChange={(e) => moveSlider(Number(e.target.value))}
         aria-label="Depth"
       />
 
@@ -131,6 +154,14 @@ function TankRound({ onResult }) {
   const revealed = picked !== null;
   const correct = picked === BEST_HOLE;
 
+  const pickHole = (h, el) => {
+    if (revealed) return;
+    setPicked(h);
+    const c = fx.centerOf(el);
+    if (h === BEST_HOLE) { fx.sparkle(c.x, c.y); fx.confetti(c.x, c.y); playSfx("correct"); }
+    else { fx.splash(c.x, c.y); fx.puff(c.x, c.y, ["#c46b5f", "#9c4a42", "#f4e9c9"]); playSfx("wrong"); }
+  };
+
   return (
     <div>
       <HintHelper paused={revealed}>
@@ -150,7 +181,7 @@ function TankRound({ onResult }) {
             stroke={h === BEST_HOLE ? "#d7a85f" : "#4ca9c7"} strokeWidth={h === BEST_HOLE ? 4 : 2.5} />
         ))}
         {HOLES.map((h) => (
-          <g key={h} onClick={() => !revealed && setPicked(h)} style={{ cursor: revealed ? "default" : "pointer" }}>
+          <g key={h} onClick={(e) => pickHole(h, e.currentTarget)} style={{ cursor: revealed ? "default" : "pointer" }}>
             <circle cx={tankW} cy={20 + h * S} r="9" fill={picked === h ? "#d7a85f" : "#1b2d2f"} stroke="#fff" strokeWidth="2" />
             <text x={tankW + 14} y={20 + h * S + 4} fontSize="11" fill="#1b2d2f">{h} m deep</text>
           </g>

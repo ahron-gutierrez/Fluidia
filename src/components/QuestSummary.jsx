@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 
 import AnimatedAvatar from "./AnimatedAvatar";
 import { AVATAR_POSES } from "../data/avatarAssets";
+import * as fx from "../utils/pixelFx";
 import { playSfx } from "../utils/sfx";
 import "../styles/Summary.css";
 
@@ -44,6 +45,20 @@ function QuestSummary({ title, spriteId, summary, totalRounds, firstTryRounds, b
 
   useEffect(() => {
     playSfx("fanfare");
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const timers = [
+      setTimeout(() => {                                   // confetti cannons from the bottom corners
+        fx.confetti(0, h, -Math.PI / 3, 0.7);
+        fx.confetti(w, h, (-2 * Math.PI) / 3, 0.7);
+      }, 500),
+      setTimeout(() => {                                   // sparkle burst when the score lands
+        fx.sparkle(w / 2, h / 2);
+        fx.confetti(w / 2, h / 2);
+        playSfx("correct");
+      }, 3200),
+    ];
+    return () => timers.forEach(clearTimeout);
   }, []);
 
   return createPortal(

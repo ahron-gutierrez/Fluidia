@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useBlocker } from "react-router-dom";
 
 import AnimatedAvatar from "../components/AnimatedAvatar";
@@ -18,6 +18,8 @@ import {
   getProgress,
   setProgress,
 } from "../data/gameData";
+import * as fx from "../utils/pixelFx";
+import { playSfx } from "../utils/sfx";
 import "../styles/Plumber.css";
 
 const QUEST_ID = "windmills-secret"; // the fluid-flow quest
@@ -43,13 +45,45 @@ const areaCm = (dCm) => (Math.PI * (dCm / 100) ** 2) / 4; // m²
 /* ---------- Stage: your avatar reacts with jump / punch / shocked / fall ---------- */
 function ActionStage({ outcome, spriteId, mood }) {
   const [step, setStep] = useState("Idle");
+  const heroRef = useRef(null);
+  const valveRef = useRef(null);
 
   useEffect(() => {
     if (!outcome) return undefined;
     const timers = [];
     let t = 0;
+
+    // pixel effects that go with each pose
+    const effectFor = (pose) => {
+      const hero = heroRef.current;
+      const valve = valveRef.current;
+      if (pose === "Punch" && valve) {
+        const c = fx.centerOf(valve);
+        fx.waterSpray(c.x, c.y - 10, 1);
+        fx.waterSpray(c.x, c.y - 10, -1);
+        fx.sparkle(c.x, c.y);
+        playSfx("splash");
+      } else if (pose === "Jump" && hero) {
+        const c = fx.feetOf(hero);
+        fx.puff(c.x, c.y);
+      } else if (pose === "Shocked" && hero) {
+        const c = fx.centerOf(hero);
+        fx.sparks(c.x, c.y - 20);
+      } else if (pose === "Fall" && hero) {
+        const c = fx.feetOf(hero);
+        fx.puff(c.x, c.y, ["#9aa5ad", "#f4e9c9"]);
+      }
+    };
+
+    playSfx(outcome.kind === "fail" ? "wrong" : "correct");
+    if (outcome.kind === "cheer" && heroRef.current) {
+      const c = fx.centerOf(heroRef.current);
+      fx.confetti(c.x - 40, c.y);
+      fx.confetti(c.x + 140, c.y);
+    }
+
     SEQUENCES[outcome.kind].forEach(([pose, ms]) => {
-      timers.push(setTimeout(() => setStep(pose), t));
+      timers.push(setTimeout(() => { setStep(pose); effectFor(pose); }, t));
       t += ms;
     });
     timers.push(setTimeout(() => setStep("Idle"), t));
@@ -59,10 +93,10 @@ function ActionStage({ outcome, spriteId, mood }) {
   return (
     <div className="plumber-stage">
       <SpriteSlot src="/lobby/plumber-interior.png" label="plumber-interior.png" className="plumber-stage-bg" />
-      <div className={`plumber-hero step-${step.toLowerCase()}`}>
+      <div ref={heroRef} className={`plumber-hero step-${step.toLowerCase()}`}>
         <AnimatedAvatar spriteId={spriteId} row={POSE[step]} animate size={112} />
       </div>
-      <div className={`plumber-valve${step === "Punch" ? " hit" : ""}`}>🚰</div>
+      <div ref={valveRef} className={`plumber-valve${step === "Punch" ? " hit" : ""}`}>🚰</div>
       <div className={`plumber-npc ${mood}`}>
         <SpriteSlot src="/lobby/plumber.png" label="plumber.png" />
       </div>

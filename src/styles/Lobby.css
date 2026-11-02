@@ -200,7 +200,8 @@
   100% { opacity: 0; }
 }
 
-.lobby-door-house { top: 24%; width: 17%; aspect-ratio: 1 / 1; }
+/* Houses are anchored by their base (not their top) so they stand on the grass next to the castle. */
+.lobby-door-house { top: auto; bottom: 30.6%; width: 17%; aspect-ratio: 1 / 1; }
 .lobby-door.is-locked .lobby-door-sprite { filter: grayscale(1) brightness(0.6); }
 .lobby-door.is-locked { cursor: not-allowed; }
 .lobby-door.is-new { animation: lobby-door-glow 1.4s ease-in-out infinite alternate; }

@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 
 import AnimatedAvatar from "./AnimatedAvatar";
 import { AVATAR_POSES } from "../data/avatarAssets";
+import * as fx from "../utils/pixelFx";
 import { playSfx } from "../utils/sfx";
 
 const WALK_ROW = AVATAR_POSES.find((p) => p.label === "Walk").row;
@@ -26,6 +27,7 @@ function RoundIntro({ round, spriteId, onDone }) {
     const toStart = setTimeout(() => {
       setPhase("start");
       playSfx("start");
+      fx.sparkle(window.innerWidth / 2, window.innerHeight / 2);
     }, SLIDE_MS);
     const toExit = setTimeout(() => {
       setPhase("exit");

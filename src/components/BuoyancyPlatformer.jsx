@@ -4,6 +4,7 @@ import AnimatedAvatar from "./AnimatedAvatar";
 import PixelWater from "./PixelWater";
 import SpriteSlot from "./SpriteSlot";
 import { AVATAR_POSES } from "../data/avatarAssets";
+import * as fx from "../utils/pixelFx";
 import { playSfx } from "../utils/sfx";
 import "../styles/Platformer.css";
 
@@ -65,12 +66,14 @@ function BuoyancyPlatformer({ round, spriteId, solved, onResult }) {
   const [snap, setSnap] = useState(null);
   const [scale, setScale] = useState(1);
   const wrapRef = useRef(null);
+  const scaleRef = useRef(1);
   const solvedRef = useRef(solved);
   const resultRef = useRef(onResult);
 
   useEffect(() => {
     solvedRef.current = solved;
     resultRef.current = onResult;
+    scaleRef.current = scale;
   });
 
   // Fit the 800x450 world to the available width.
@@ -109,6 +112,12 @@ function BuoyancyPlatformer({ round, spriteId, solved, onResult }) {
     window.addEventListener("keydown", down);
     window.addEventListener("keyup", up);
 
+    // world position -> screen position (for the pixel effects)
+    const toScreen = (wx, wy) => {
+      const r = wrapRef.current.getBoundingClientRect();
+      return { x: r.left + wx * scaleRef.current, y: r.top + wy * scaleRef.current };
+    };
+
     const resolveDrop = (it, now) => {
       const frac = it.rho / round.fluid.rho;
       const sinks = frac >= 1;
@@ -116,8 +125,15 @@ function BuoyancyPlatformer({ round, spriteId, solved, onResult }) {
       it.frac = Math.min(frac, 1);
       it.y = sinks ? H - 4 : SURFACE + it.frac * ITEM;
       playSfx("splash");
+      const hit = toScreen(it.x, SURFACE);
+      fx.splash(hit.x, hit.y, round.fluid.color);
+      if (sinks) fx.bubbles(hit.x, hit.y + 20, 10);
       const good = !sinks && Math.abs(frac - round.target) <= TOLERANCE;
+      playSfx(good ? "correct" : "wrong");
       if (good) {
+        const top = toScreen(it.x, SURFACE - 30);
+        fx.sparkle(top.x, top.y);
+        fx.confetti(top.x, top.y);
         solvedRef.current = true;
         g.pose = { name: "Jump", until: Infinity };
       } else {
@@ -142,10 +158,14 @@ function BuoyancyPlatformer({ round, spriteId, solved, onResult }) {
       if (g.pressed.has("jump") && p.ground) {
         p.vy = -JUMP;
         p.ground = false;
+        const f = toScreen(p.x, p.y);
+        fx.puff(f.x, f.y);
       }
       p.vy += GRAVITY * dt;
       p.y += p.vy * dt;
       p.x = clamp(p.x + p.vx * dt, 16, W - 16);
+      const fallSpeed = p.vy;
+      const wasGround = p.ground;
       p.ground = false;
       if (p.vy >= 0) {
         for (const pl of PLATFORMS) {
@@ -153,6 +173,10 @@ function BuoyancyPlatformer({ round, spriteId, solved, onResult }) {
             p.y = pl.y;
             p.vy = 0;
             p.ground = true;
+            if (!wasGround && fallSpeed > 380) {          // landing dust
+              const f = toScreen(p.x, p.y);
+              fx.puff(f.x, f.y);
+            }
             break;
           }
         }
@@ -182,6 +206,9 @@ function BuoyancyPlatformer({ round, spriteId, solved, onResult }) {
             g.heldId = near.id;
             g.pose = { name: "Punch", until: now + 300 };
             playSfx("pickup");
+            const f = toScreen(p.x, p.y);
+            fx.puff(f.x, f.y);
+            fx.sparkle(f.x, f.y - 40, ["#f0cd86", "#fff"]);
           }
         }
       }
