@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import AnimatedAvatar from "../components/AnimatedAvatar";
 import AvatarEditor from "../components/AvatarEditor";
 import FluidiaMap from "../components/FluidiaMap";
 import LocationInfo from "../components/LocationInfo";
+import { evaluateAchievements } from "../data/achievements";
 import { DEFAULT_AVATAR_ROW } from "../data/avatarAssets";
 import {
   QUESTS,
@@ -16,6 +17,12 @@ import {
 
 function Dashboard() {
   const currentUser = getCurrentUser();
+
+  // grants anything earned before achievements existed (shows the pop-ups once)
+  useEffect(() => {
+    if (currentUser) evaluateAchievements(currentUser.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [avatar, setAvatar] = useState(() => getAvatar(currentUser?.id));
   const [isAvatarEditorOpen, setIsAvatarEditorOpen] = useState(false);
   const [mapLocation, setMapLocation] = useState(null);
@@ -99,6 +106,12 @@ function Dashboard() {
               </button>
               <Link to="/account/edit" className="btn btn-secondary dashboard-profile-button">
                 View profile
+              </Link>
+              <Link to="/endless" className="btn btn-secondary dashboard-profile-button">
+                Endless
+              </Link>
+              <Link to="/achievements" className="btn btn-secondary dashboard-profile-button">
+                Trophies
               </Link>
             </div>
           </section>

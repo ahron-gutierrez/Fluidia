@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 
+import { recordSandbox } from "../data/achievements";
 import { DEFAULT_AVATAR_ID } from "../data/avatarAssets";
 import { getAvatar, getCurrentUser } from "../data/gameData";
 import FlowSandbox from "../features/sandbox/FlowSandbox";
@@ -43,6 +45,11 @@ function Sandbox() {
   const { lessonId } = useParams();
   const entry = LESSONS[lessonId];
   const user = getCurrentUser();
+
+  useEffect(() => {
+    if (user && entry) recordSandbox(user.id, lessonId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lessonId]);
 
   if (!entry) {
     return (

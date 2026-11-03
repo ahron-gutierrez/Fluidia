@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import AnimatedAvatar from "./AnimatedAvatar";
 import SpriteSlot from "./SpriteSlot";
 import { AVATAR_POSES, DEFAULT_AVATAR_ID } from "../data/avatarAssets";
+import { evaluateAchievements } from "../data/achievements";
 import { getMapVisited, setMapVisited } from "../data/gameData";
 import { MAP_LOCATIONS } from "../data/mapLocations";
 import "../styles/Map.css";
@@ -46,6 +47,7 @@ function FluidiaMap({ userId, spriteId, onNearbyChange }) {
     const next = [...visited, nearby.id];
     setVisited(next);
     setMapVisited(userId, next);
+    evaluateAchievements(userId);
   }, [nearby, visited, userId]);
 
   // Keyboard: arrows / WASD.

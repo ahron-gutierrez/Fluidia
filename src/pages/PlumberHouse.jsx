@@ -10,6 +10,7 @@ import RoundIntro from "../components/RoundIntro";
 import SpriteSlot from "../components/SpriteSlot";
 import { AVATAR_POSES, DEFAULT_AVATAR_ID } from "../data/avatarAssets";
 import QuestSummary from "../components/QuestSummary";
+import { recordQuestResult } from "../data/achievements";
 import {
   addScore,
   calculateQuestScore,
@@ -354,6 +355,7 @@ function PlumberHouse() {
 
     const breakdown = calculateQuestScore(TOTAL, points);
     const account = firstCompletion ? addScore(currentUser.id, breakdown.total) : null;
+    recordQuestResult(currentUser.id, QUEST_ID, points, TOTAL, firstCompletion);
     const now = currentUser.score ?? 0;
     // let the avatar celebrate on stage first, then show the summary screen
     setTimeout(
@@ -437,6 +439,7 @@ function PlumberHouse() {
           <div className="mt-2">
             <p>First-try score: <strong>{score}/{TOTAL}</strong>. Quest saved!</p>
             <Link to="/intro" className="btn btn-primary">Back to lobby</Link>
+            <Link to={`/endless/${QUEST_ID}`} className="btn btn-secondary ms-2">Endless mode</Link>
           </div>
         )}
       </div>

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import AnimatedAvatar from "./AnimatedAvatar";
 import { AVATAR_SPRITES, DEFAULT_AVATAR_ROW } from "../data/avatarAssets";
+import { recordLookChange } from "../data/achievements";
 import { getAvatar, setAvatar } from "../data/gameData";
 import * as fx from "../utils/pixelFx";
 import { playSfx } from "../utils/sfx";
@@ -38,6 +39,7 @@ function DressingRoom({ userId }) {
       setTimeout(() => {
         setIndex(next); // swap while nobody can see
         setAvatar(userId, { spriteId: AVATAR_SPRITES[next].id, row: saved?.row ?? DEFAULT_AVATAR_ROW });
+        recordLookChange(userId);
       }, CLOSE_MS + HOLD_MS / 2),
       setTimeout(() => {
         setCurtain("open");

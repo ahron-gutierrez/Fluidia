@@ -131,6 +131,11 @@ function Navbar() {
             Adventure Mode
           </NavLink>
           {user ? (
+            <NavLink to="/endless" onClick={closeAllMenus}>
+              Endless
+            </NavLink>
+          ) : null}
+          {user ? (
             <details className="nav-profile-menu" ref={profileMenuRef}>
               <summary
                 className="profile-menu-trigger"
@@ -150,6 +155,12 @@ function Navbar() {
                   <strong>{user.name || "Explorer"}</strong>
                   <span>{user.email}</span>
                 </div>
+                <Link to="/achievements" onClick={() => closeMenu(profileMenuRef)}>
+                  <svg className="pixel-icon" viewBox="0 0 16 16" aria-hidden="true">
+                    <path d="M3 1h10v3h2v4h-2v1h-2v2H9v2h2v2H5v-2h2v-2H5V9H3V8H1V4h2zM5 3v5h6V3zM3 6H3v1h0zM13 6v1" />
+                  </svg>
+                  Achievements
+                </Link>
                 <Link to="/account/edit" onClick={() => closeMenu(profileMenuRef)}>
                   <svg className="pixel-icon" viewBox="0 0 16 16" aria-hidden="true">
                     <path d="M6 1h4v2h2v2h2v6h-2v2h-2v2H6v-2H4v-2H2V5h2V3h2zM6 3v2H4v6h2v2h4v-2h2V5h-2V3zM7 6h2v4H7z" />

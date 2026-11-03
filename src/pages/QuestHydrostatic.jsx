@@ -10,6 +10,7 @@ import { DEFAULT_AVATAR_ID } from "../data/avatarAssets";
 import * as fx from "../utils/pixelFx";
 import { playSfx } from "../utils/sfx";
 import QuestSummary from "../components/QuestSummary";
+import { recordQuestResult } from "../data/achievements";
 import {
   addScore,
   calculateQuestScore,
@@ -259,6 +260,7 @@ function QuestHydrostatic() {
 
     const breakdown = calculateQuestScore(TOTAL, points);
     const account = firstCompletion ? addScore(currentUser.id, breakdown.total) : null;
+    recordQuestResult(currentUser.id, QUEST_ID, points, TOTAL, firstCompletion);
     const now = currentUser.score ?? 0;
     setSummary({
       title: "Hydrostatic Pressure: The Deep Dive",
@@ -327,6 +329,7 @@ function QuestHydrostatic() {
               Play again
             </button>
             <Link to="/intro" className="btn btn-primary">Back to lobby</Link>
+            <Link to={`/endless/${QUEST_ID}`} className="btn btn-secondary ms-2">Endless mode</Link>
           </div>
         )}
       </div>

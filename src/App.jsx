@@ -14,6 +14,10 @@ import QuestHydrostatic from "./pages/QuestHydrostatic";
 import PlumberHouse from "./pages/PlumberHouse";
 import LaboratoryQuest from "./pages/LaboratoryQuest";
 import Sandbox from "./pages/Sandbox";
+import Achievements from "./pages/Achievements";
+import AchievementToaster from "./components/AchievementToaster";
+import EndlessHub from "./features/endless/EndlessHub";
+import EndlessRun from "./features/endless/EndlessRun";
 
 import Overview from "./features/Overview";
 import FluidsPage from "./features/01_fluids/page";
@@ -26,6 +30,7 @@ function App() {
   return (
     <div className="page-shell">
       <Navbar />
+      <AchievementToaster />
 
       <main className="page-main">
         <Routes>
@@ -36,6 +41,9 @@ function App() {
           <Route path="/quest/plumber-house" element={<PlumberHouse />} />
           <Route path="/quest/laboratory" element={<LaboratoryQuest />} />
           <Route path="/sandbox/:lessonId" element={<Sandbox />} />
+          <Route path="/endless" element={<EndlessHub />} />
+          <Route path="/endless/:questId" element={<EndlessRun />} />
+          <Route path="/achievements" element={<Achievements />} />
           <Route path="/account/edit" element={<EditAccount />} />
           <Route path="/login" element={<Login />} />
           <Route path="/overview" element={<Overview />} />

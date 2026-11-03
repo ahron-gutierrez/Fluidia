@@ -7,7 +7,7 @@
 
 :root {
   --font-pixel: "Press Start 2P", "Courier New", monospace;
-  --font-body: "Pixelify Sans", "Trebuchet MS", sans-serif;
+  --font-body: "Jersey 15", "Trebuchet MS", sans-serif; /* clear digits (Pixelify Sans turns 5 into S) */
   --bevel-light: rgba(255, 255, 255, 0.4);
   --bevel-dark: rgba(0, 0, 0, 0.2);
 }
@@ -24,8 +24,9 @@ label {
 
 body {
   font-size: 1.08rem;
-  line-height: 1.5;
-  letter-spacing: 0.01em;
+  font-size-adjust: 0.49; /* Jersey 15 has a small x-height: scale it up to match the layout */
+  line-height: 1.45;
+  letter-spacing: 0.02em;
   -webkit-font-smoothing: none;
   font-smooth: never;
 }
@@ -34,11 +35,12 @@ body {
 .brand-mark,
 .hero-title {
   font-family: var(--font-pixel);
+  font-size-adjust: none;
   text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.18);
 }
 
 .pixel-heading { letter-spacing: 0.04em; }
-.eyebrow { font-family: var(--font-body); font-weight: 700; letter-spacing: 0.2em; }
+.eyebrow { font-family: var(--font-body); font-weight: 400; letter-spacing: 0.2em; }
 p, li { text-wrap: pretty; }
 
 a { text-decoration-style: dotted; text-underline-offset: 3px; }
@@ -80,7 +82,7 @@ body {
 /* ---------- buttons: bevel, hard shadow, press down ---------- */
 .btn {
   font-family: var(--font-body);
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   position: relative;
@@ -245,3 +247,7 @@ kbd {
 
 /* the pixel heading font is wide: keep long titles inside their panels */
 .pixel-heading.md { font-size: clamp(0.95rem, 1.6vw, 1.5rem); }
+
+/* dashboard sidebar: four profile buttons in a 2 x 2 grid */
+.dashboard-profile-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.dashboard-profile-actions .dashboard-profile-button { min-width: 0; padding-inline: 0.4rem; font-size: 0.8rem; white-space: nowrap; }
