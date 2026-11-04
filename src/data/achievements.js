@@ -1,3 +1,4 @@
+import { QUIZ_IDS } from "../features/quiz/quizData";
 import { getCurrentUser, getMapVisited, getProgress, setProgress } from "./gameData";
 
 // Achievements live inside the saved quest progress (progress.achievements / .stats / .questResults /
@@ -34,6 +35,10 @@ export const ACHIEVEMENTS = [
   { id: "on-a-roll", icon: "🔥", rarity: "rare", title: "On a Roll", desc: "Answer 10 questions in a row in an endless run.", check: (c) => c.bestStreak >= 10 },
   { id: "untouchable", icon: "🛡️", rarity: "epic", title: "Untouchable", desc: "Reach level 10 in an endless run without losing a life.", check: (c) => (c.stats.perfectRunLevel ?? 0) >= 10 },
   { id: "deep-diver", icon: "🐙", rarity: "epic", title: "Deep Diver", desc: "Reach level 15 in an endless run.", check: (c) => c.bestLevel >= 15 },
+  { id: "pop-quiz", icon: "📝", rarity: "common", title: "Pop Quiz", desc: "Finish a quiz in the Quiz Hall.", check: (c) => Object.keys(c.quizzes).length >= 1 },
+  { id: "straight-as", icon: "💯", rarity: "rare", title: "Straight A's", desc: "Get a perfect score on a quiz.", check: (c) => Object.values(c.quizzes).some((r) => r.best >= 15) },
+  { id: "honor-roll", icon: "📚", rarity: "rare", title: "Honor Roll", desc: "Score at least 12/15 on all five quizzes.", check: (c) => QUIZ_IDS.every((id) => (c.quizzes[id]?.best ?? 0) >= 12) },
+  { id: "valedictorian", icon: "🎓", rarity: "epic", title: "Valedictorian", desc: "Get a perfect score on all five quizzes.", check: (c) => QUIZ_IDS.every((id) => (c.quizzes[id]?.best ?? 0) >= 15) },
   { id: "high-roller", icon: "💎", rarity: "epic", title: "High Roller", desc: "Score 3000 points in a single endless run.", check: (c) => (c.stats.bestRunScore ?? 0) >= 3000 },
 ];
 
@@ -43,6 +48,7 @@ function buildContext(userId) {
   return {
     completed: progress.completedQuests ?? [],
     results: progress.questResults ?? {},
+    quizzes: progress.quizzes ?? {},
     stats: progress.stats ?? {},
     mapVisited: getMapVisited(userId).length,
     score: getCurrentUser()?.score ?? 0,
@@ -132,6 +138,18 @@ export function recordEndlessRun(userId, questId, run) {
       bestRunScore: Math.max(stats.bestRunScore ?? 0, run.score),
       perfectRunLevel: Math.max(stats.perfectRunLevel ?? 0, run.perfectLevel ?? 0),
     },
+  });
+  return evaluateAchievements(userId);
+}
+
+// score = number correct. Keeps the best score and the number of attempts per quiz.
+export function recordQuizResult(userId, quizId, score, total) {
+  const progress = getProgress(userId);
+  const all = progress.quizzes ?? {};
+  const old = all[quizId] ?? { best: 0, attempts: 0 };
+  setProgress(userId, {
+    ...progress,
+    quizzes: { ...all, [quizId]: { best: Math.max(old.best, score), attempts: old.attempts + 1, total } },
   });
   return evaluateAchievements(userId);
 }

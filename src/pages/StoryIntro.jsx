@@ -20,7 +20,7 @@ const NEAR_DISTANCE = 9; // how close (in % x) you must be to a door
 
 // Where you appear in each scene (% of stage).
 const SPAWN = {
-  outside: { x: 10, y: 84 },
+  outside: { x: 26, y: 87 },
   exit: { x: 38, y: 80 }, // just outside the castle gate, after leaving through the Exit door
   account: { x: 20, y: 68 }, // in front of the Edit Account door, after leaving that page // story starts outside the castle
   inside: { x: 50, y: 88 }, // just inside the entrance
@@ -28,6 +28,8 @@ const SPAWN = {
 
 // Outside scene: only the castle entrance. Walk up and enter to reveal the lobby.
 const OUTSIDE_DOORS = [
+  // Quizzes: always open. Re-uses the laboratory sprite (swap in your own PNG later).
+  { id: "quiz", label: "Quiz Hall", x: 12, src: "/lobby/laboratory.png", png: "laboratory.png", house: true, route: "/quiz" },
   { id: "castle", label: "Enter Castle", x: 38, src: "/lobby/castle.png", png: "castle.png", large: true },
   // Unlocks after the first quest (Hydrostatic Pressure) is completed.
   {
@@ -50,7 +52,7 @@ const INSIDE_DOORS = [
   { id: "exit", label: "Exit", x: 80, src: "/lobby/door-exit.png" },
 ];
 
-// Your own characters. Add more entries to place more.
+// Your own characters. Add more entries to place more. idk why i bother adding this if im the only one reading it
 // x / y = feet position (% of stage). src = PNG you drop into /public/lobby.
 const CHARACTERS = [
   {
@@ -59,7 +61,7 @@ const CHARACTERS = [
     x: 32,
     y: 78,
     src: "/lobby/character.png",
-    line: "Hello! This is our Final Project for Calphy! Enjoy!",
+    line: "Hello! Welcome to Fluidia~ Our Final Project for Calphy",
   },
   {
     id: "guide",

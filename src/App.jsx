@@ -18,6 +18,8 @@ import Achievements from "./pages/Achievements";
 import AchievementToaster from "./components/AchievementToaster";
 import EndlessHub from "./features/endless/EndlessHub";
 import EndlessRun from "./features/endless/EndlessRun";
+import QuizHub from "./features/quiz/QuizHub";
+import QuizRun from "./features/quiz/QuizRun";
 
 import Overview from "./features/Overview";
 import FluidsPage from "./features/01_fluids/page";
@@ -41,6 +43,8 @@ function App() {
           <Route path="/quest/plumber-house" element={<PlumberHouse />} />
           <Route path="/quest/laboratory" element={<LaboratoryQuest />} />
           <Route path="/sandbox/:lessonId" element={<Sandbox />} />
+          <Route path="/quiz" element={<QuizHub />} />
+          <Route path="/quiz/:quizId" element={<QuizRun />} />
           <Route path="/endless" element={<EndlessHub />} />
           <Route path="/endless/:questId" element={<EndlessRun />} />
           <Route path="/achievements" element={<Achievements />} />

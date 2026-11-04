@@ -136,6 +136,11 @@ function Navbar() {
             </NavLink>
           ) : null}
           {user ? (
+            <NavLink to="/quiz" onClick={closeAllMenus}>
+              Quizzes
+            </NavLink>
+          ) : null}
+          {user ? (
             <details className="nav-profile-menu" ref={profileMenuRef}>
               <summary
                 className="profile-menu-trigger"

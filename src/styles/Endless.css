@@ -50,3 +50,12 @@
 .endless-option.wrong { background: #f3c8c2; border-color: #9c4a42; animation: plumber-shake 0.25s linear 2; }
 .endless-option.dim { opacity: 0.55; }
 .endless-option kbd { margin-right: 0.4rem; }
+
+/* quizzes reuse the endless screens */
+.endless-stage.topic-quiz { background: repeating-linear-gradient(90deg, #e9dcb0 0 28px, #dccf9f 28px 30px), #e9dcb0; }
+.endless-options.quiz-options { grid-template-columns: 1fr; }
+.quiz-missed { margin-top: 0.8rem; text-align: left; }
+.quiz-missed summary { cursor: pointer; font-weight: bold; }
+.quiz-missed ul { max-height: 190px; overflow-y: auto; margin: 0.5rem 0 0; padding: 0.5rem 0.8rem 0.5rem 1.4rem; background: #fff; border: 3px solid var(--border); font-size: 0.9rem; }
+.quiz-missed li { margin-bottom: 0.6rem; }
+.quiz-missed-answer { color: #3f7a47; }
