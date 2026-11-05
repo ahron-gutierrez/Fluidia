@@ -126,8 +126,11 @@ function ArchimedesSimulation() {
 
   // actual UI side
   return (
-    <div>
+    <div className="archimedes-simulation">
+      <div className="archimedes-simulation__workspace">
+        <div className="archimedes-simulation__visual">
       <svg
+        className="archimedes-simulation__tank"
         viewBox={`0 0 ${SVG_W} ${SVG_H}`}
         width="100%"
         style={{
@@ -232,19 +235,19 @@ function ArchimedesSimulation() {
         )}
       </svg>
 
-      <p className="small mb-3">
-        <span style={{ color: "#c0392b" }}>&#9632;</span> Weight (down){" "}
-        <span style={{ color: "#1e8449" }} className="ms-3">&#9632;</span> Buoyant force (up)
+      <p className="archimedes-simulation__legend">
+        <span className="archimedes-simulation__legend-item archimedes-simulation__legend-item--weight">Weight: down</span>
+        <span className="archimedes-simulation__legend-item archimedes-simulation__legend-item--buoyancy">Buoyant force: up</span>
       </p>
-
-      <section aria-labelledby="archimedes-controls">
-         <div className="d-flex flex-wrap gap-2">
-          <button type="button" className="btn btn-primary" onClick={drop}>Drop / Release</button>
-          <button type="button" className="btn btn-outline-secondary" onClick={reset}>Reset</button>
         </div>
-        <h3 id="archimedes-controls" className="h5">Controls</h3>
 
-        <div className="mb-3">
+        <div className="archimedes-simulation__panel">
+      <section className="archimedes-simulation__controls" aria-label="Experiment controls">
+         <div className="archimedes-simulation__actions">
+          <button type="button" className="btn archimedes-simulation__release" onClick={drop}>Drop / Release</button>
+          <button type="button" className="btn archimedes-simulation__reset" onClick={reset}>Reset</button>
+        </div>
+        <div className="archimedes-simulation__slider-group">
           <label htmlFor="object-density" className="form-label">
             Object density: {objectDensity} kg/m³
           </label>
@@ -260,7 +263,7 @@ function ArchimedesSimulation() {
           />
         </div>
 
-        <div className="mb-3">
+        <div className="archimedes-simulation__slider-group">
           <label htmlFor="fluid-density" className="form-label">
             Fluid density: {fluidDensity} kg/m³
           </label>
@@ -276,7 +279,7 @@ function ArchimedesSimulation() {
           />
         </div>
 
-        <div className="mb-3">
+        <div className="archimedes-simulation__slider-group">
           <label htmlFor="object-volume" className="form-label">
             Object volume: {volume.toFixed(3)} m³
           </label>
@@ -292,48 +295,40 @@ function ArchimedesSimulation() {
           />
         </div>
 
-        <div className="mb-3">
-          <span className="form-label d-block">Fluid presets</span>
-          <div className="d-flex flex-wrap gap-2">
-            <button type="button" className="btn btn-secondary" onClick={() => setFluidDensity(800)}>Oil (800)</button>
-            <button type="button" className="btn btn-secondary" onClick={() => setFluidDensity(1000)}>Water (1000)</button>
-            <button type="button" className="btn btn-secondary" onClick={() => setFluidDensity(1025)}>Salt water (1025)</button>
-            <button type="button" className="btn btn-secondary" onClick={() => setFluidDensity(13600)}>Mercury (13600)</button>
+        <div className="archimedes-simulation__preset-group">
+          <span className="form-label">Fluid presets</span>
+          <div className="archimedes-simulation__preset-buttons">
+            <button type="button" className="btn archimedes-simulation__fluid-preset" onClick={() => setFluidDensity(800)}>Oil</button>
+            <button type="button" className="btn archimedes-simulation__fluid-preset" onClick={() => setFluidDensity(1000)}>Water</button>
+            <button type="button" className="btn archimedes-simulation__fluid-preset" onClick={() => setFluidDensity(1025)}>Salt water</button>
+            <button type="button" className="btn archimedes-simulation__fluid-preset" onClick={() => setFluidDensity(13600)}>Mercury</button>
           </div>
         </div>
 
-        <div className="mb-3">
-          <span className="form-label d-block">Object presets</span>
-          <div className="d-flex flex-wrap gap-2">
-            <button type="button" className="btn btn-secondary" onClick={() => setObjectDensity(600)}>Wood (600)</button>
-            <button type="button" className="btn btn-secondary" onClick={() => setObjectDensity(917)}>Ice (917)</button>
-            <button type="button" className="btn btn-secondary" onClick={() => setObjectDensity(2700)}>Aluminum (2700)</button>
-            <button type="button" className="btn btn-secondary" onClick={() => setObjectDensity(7870)}>Iron (7870)</button>
+        <div className="archimedes-simulation__preset-group">
+          <span className="form-label">Object presets</span>
+          <div className="archimedes-simulation__preset-buttons">
+            <button type="button" className="btn archimedes-simulation__object-preset" onClick={() => setObjectDensity(600)}>Wood</button>
+            <button type="button" className="btn archimedes-simulation__object-preset" onClick={() => setObjectDensity(917)}>Ice</button>
+            <button type="button" className="btn archimedes-simulation__object-preset" onClick={() => setObjectDensity(2700)}>Aluminum</button>
+            <button type="button" className="btn archimedes-simulation__object-preset" onClick={() => setObjectDensity(7870)}>Iron</button>
           </div>
         </div>
-
-        {/* <div className="d-flex flex-wrap gap-2">
-          <button type="button" className="btn btn-primary" onClick={drop}>Drop / Release</button>
-          <button type="button" className="btn btn-outline-secondary" onClick={reset}>Reset</button>
-        </div> */}
       </section>
 
-      <section className="mt-4" aria-labelledby="archimedes-readouts">
-        <h3 id="archimedes-readouts" className="h5">Live readouts</h3>
-        <dl className="row mb-2">
-          <dt className="col-sm-6">Submerged</dt>
-          <dd className="col-sm-6">{(submerged * 100).toFixed(0)} %</dd>
-          <dt className="col-sm-6">Buoyant force</dt>
-          <dd className="col-sm-6">{buoyantForce.toFixed(1)} N</dd>
-          <dt className="col-sm-6">Weight</dt>
-          <dd className="col-sm-6">{weight.toFixed(1)} N</dd>
-          <dt className="col-sm-6">Result</dt>
-          <dd className="col-sm-6">{result}</dd>
+      <section className="archimedes-simulation__readouts" aria-labelledby="archimedes-readouts">
+        <dl>
+          <div><dt>Submerged</dt><dd>{(submerged * 100).toFixed(0)} %</dd></div>
+          <div><dt>Buoyant force</dt><dd>{buoyantForce.toFixed(1)} N</dd></div>
+          <div><dt>Weight</dt><dd>{weight.toFixed(1)} N</dd></div>
+          <div className={`archimedes-simulation__result archimedes-simulation__result--${result.toLowerCase().replaceAll(" ", "-")}`}><dt>Result</dt><dd>{result}</dd></div>
         </dl>
-        <p className="mb-0">
+        <p>
           Compare buoyant force with weight to see why an object floats or sinks.
         </p>
       </section>
+        </div>
+      </div>
     </div>
   );
 }

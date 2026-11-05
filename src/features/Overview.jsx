@@ -1,54 +1,58 @@
+
 import { Link } from "react-router-dom";
 
-const topics = [
+const lessonLinks = [
   {
     title: "Fluid Pressure and Density",
-    description:
-      "Learn how pressure in a fluid depends on depth, density, and gravitational acceleration.",
-    route: "/fluids/pressure-density",
+    description: "Explore how fluid pressure changes with depth and density.",
+    path: "/fluids/pressure-density",
+    sandbox: "/sandbox/pressure-density",
   },
   {
     title: "Specific Gravity",
-    description:
-      "Compare a material's density with the density of water using specific gravity.",
-    route: "/fluids/specific-gravity",
+    description: "Compare a substance's density with the density of water.",
+    path: "/fluids/specific-gravity",
+    sandbox: "/sandbox/specific-gravity",
   },
   {
     title: "Buoyancy and Archimedes' Principle",
-    description:
-      "Understand displaced fluid, buoyant force, and why objects float or sink.",
-    route: "/fluids/archimedes",
+    description: "Learn how displaced fluid creates buoyant force on an object.",
+    path: "/fluids/archimedes",
+    sandbox: "/sandbox/archimedes",
   },
   {
     title: "Fluid Flow and Bernoulli's Principle",
-    description:
-      "Explore how flow speed, cross-sectional area, and pressure relate in moving fluids.",
-    route: "/fluids/rate-of-flow",
+    description: "Relate fluid speed, pressure, and cross-sectional area.",
+    path: "/fluids/rate-of-flow",
+    sandbox: "/sandbox/rate-of-flow",
   },
 ];
 
 function Overview() {
   return (
     <main className="container py-5">
-      <header className="pixel-panel overview-panel">
-        <p className="eyebrow accent">Fluids</p>
-        <h1 className="pixel-heading md">Fluidia's World of Flow</h1>
+      <div className="pixel-panel overview-panel">
+        <p className="eyebrow accent">Fluid physics</p>
+        <h1 className="pixel-heading md">Fluid Mechanics</h1>
         <p className="lead">
-          In Fluidia, water and air can seem to work wonders from lifting ships, shaping
-          currents, and carrying life across the world. Discover the physics of fluids and how understanding their
-          hidden rules keeps Fluidia alive.
+          Study fluid properties, pressure, buoyancy, and flow through explanations,
+          interactive simulations, and knowledge checks.
         </p>
-      </header>
+      </div>
 
       <div className="quest-grid">
-        {topics.map((topic) => (
-          <section key={topic.route} className="pixel-panel quest-card">
-            <h2>{topic.title}</h2>
-            <p>{topic.description}</p>
-            <Link to={topic.route} className="btn btn-primary">
+        {lessonLinks.map((lesson) => (
+          <div key={lesson.path} className="pixel-panel quest-card">
+            <h2>{lesson.title}</h2>
+            <p>{lesson.description}</p>
+            <Link to={lesson.path} className="btn btn-primary">
               Study concept
             </Link>
-          </section>
+            {" "}
+            <Link to={lesson.sandbox} className="btn btn-secondary">
+              Sandbox
+            </Link>
+          </div>
         ))}
       </div>
     </main>

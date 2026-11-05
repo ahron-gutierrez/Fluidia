@@ -1,4 +1,5 @@
-import { Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -28,9 +29,21 @@ import SpecificGravityPage from "./features/03_specific-gravity/page";
 import ArchimedesPage from "./features/04_archimedes/page";
 import RateOfFlowPage from "./features/05_rate-of-flow/page";
 
+function ScrollReset() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+    return () => window.cancelAnimationFrame(frame);
+  }, [pathname]);
+
+  return null;
+}
+
 function App() {
   return (
     <div className="page-shell">
+      <ScrollReset />
       <Navbar />
       <AchievementToaster />
 

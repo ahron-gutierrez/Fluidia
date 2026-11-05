@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import { QUESTS, getCurrentUser, getProgress, setProgress } from "../../data/gameData";
+import LessonBottomNavigation from "../../components/LessonBottomNavigation";
 import RateOfFlowSimulation from "./simulation";
 
 function RateOfFlowPage() {
@@ -30,7 +31,7 @@ function RateOfFlowPage() {
   };
 
   return (
-    <main className="container py-5">
+    <main className="container py-5 density-lesson flow-lesson">
       <div className="pixel-panel quest-panel">
         <p className="eyebrow accent">Fluid dynamics</p>
         <h1 className="pixel-heading md">Fluid Flow and Bernoulli's Principle</h1>
@@ -43,25 +44,35 @@ function RateOfFlowPage() {
         </Link>
       </div>
 
-      <div className="quest-layout-grid">
-        <section className="pixel-panel quest-card large-card">
-          <h2>Scientific explanation</h2>
+      <div className="quest-layout-grid density-lesson-grid flow-lesson-grid">
+        <section className="pixel-panel quest-card large-card lesson-card">
+          <div className="lesson-card-heading"><h2>Fluid flow</h2></div>
+          <article className="lesson-topic">
+          <h3>Scientific explanation</h3>
           <p>In a streamlined flow, fluid speeds up where the passage narrows. According to the continuity equation, if the cross-sectional area decreases, the fluid must move faster through that region.</p>
           <p>Bernoulli's principle explains that when moving fluid speed increases, static pressure typically decreases, assuming energy is conserved in steady, incompressible flow.</p>
           <p>It is important not to treat this as the sole explanation for all lift; wings and airfoils involve additional details beyond a single Bernoulli statement.</p>
+          </article>
         </section>
 
-        <section className="pixel-panel quest-card large-card simulation-card">
-          <h2>Interactive flow lab</h2>
+        <section className="pixel-panel quest-card large-card lesson-card simulation-card flow-simulation-card">
+          <div className="lesson-card-heading"><h2>Interactive flow lab</h2></div>
           <RateOfFlowSimulation />
         </section>
       </div>
 
-      <div className="inline-actions">
+      <div className="lesson-completion-area">
         <button type="button" className="btn btn-secondary" onClick={handleQuestComplete}>
           {questComplete ? "Lesson complete" : "Mark lesson complete"}
         </button>
       </div>
+      <LessonBottomNavigation
+        lessonId="rate-of-flow"
+        backRoute="/fluids/archimedes"
+        nextRoute="/quiz"
+        nextLabel="Proceed to Quiz"
+        nextDisabled={!questComplete}
+      />
     </main>
   );
 }

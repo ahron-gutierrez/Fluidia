@@ -33,6 +33,17 @@ export const QUESTS = [
   },
 ];
 
+export const LESSON_SEQUENCE = [
+  { id: "pressure-density", number: 1, title: "Pressure and Density", route: "/fluids/pressure-density" },
+  { id: "specific-gravity", number: 2, title: "Specific Gravity", route: "/fluids/specific-gravity" },
+  { id: "archimedes", number: 3, title: "Buoyancy and Archimedes", route: "/fluids/archimedes" },
+  { id: "rate-of-flow", number: 4, title: "Fluid Flow and Bernoulli", route: "/fluids/rate-of-flow" },
+];
+
+export function getLessonById(id) {
+  return LESSON_SEQUENCE.find((lesson) => lesson.id === id) ?? LESSON_SEQUENCE[0];
+}
+
 export const DEFAULT_PROGRESS = {
   introCompleted: false,
   unlockedQuests: ["village-beneath-water"],
