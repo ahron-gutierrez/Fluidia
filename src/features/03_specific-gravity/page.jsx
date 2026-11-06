@@ -75,6 +75,12 @@ function SpecificGravityPage() {
                 https://www.britannica.com/science/specific-gravity
               </a>
             </p>
+            <p>
+              The Organic Chemistry Tutor. (2023, July 15). <em>Specific gravity</em> [Video]. YouTube. {" "}
+              <a href="https://www.youtube.com/watch?v=Zdb7z-LSyGs" target="_blank" rel="noopener noreferrer">
+                https://www.youtube.com/watch?v=Zdb7z-LSyGs
+              </a>
+            </p>
           </div>
           <section className="lesson-units">
             <h2>Units</h2>

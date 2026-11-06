@@ -106,6 +106,12 @@ function ArchimedesPage() {
                 https://www.britannica.com/science/Archimedes-principle
               </a>
             </p>
+            <p>
+              Science ABC. (2020, December 15). <em>Archimedes' principle: Explained in really simple words</em> [Video]. YouTube. {" "}
+              <a href="https://www.youtube.com/watch?v=wChr0hCga5g" target="_blank" rel="noopener noreferrer">
+                https://www.youtube.com/watch?v=wChr0hCga5g
+              </a>
+            </p>
           </div>
         </section>
 
