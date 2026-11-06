@@ -1,45 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 
 const DEFAULTS = { left: 0.25, right: 0.15, speed: 5 };
+const PX = 300, PAD = 20, PIPE = 160, SLOPE = 80;
+const X0 = PAD, X1 = X0 + PIPE, X2 = X1 + SLOPE, X3 = X2 + PIPE;
+const W = X3 + PAD, H = PX + PAD * 2, CY = H / 2;
+const PARTICLES = 70, VISUAL_SPEED = 30, MAX_SPEED = 900, WING_X = W / 2, WING_SPAN = 115;
 
-//  dont touch this if you dont know what ur doing
-const PX_PER_METER = 300;
-const PIPE_LENGTH = 160;
-const SLOPE_LENGTH = 80;
-const PAD = 20;
+const radiusAt = (x, left, right) => x <= X1 ? left : x >= X2 ? right : left + (right - left) * ((x - X1) / SLOPE);
+const pipeSpeed = (x, left, right, speed) => Math.min(speed * (left / radiusAt(x, left, right)) ** 2 * VISUAL_SPEED, MAX_SPEED);
+const makeParticle = (randomX = true) => ({ x: randomX ? X0 + Math.random() * (X3 - X0) : X0, lane: Math.random() * 1.7 - 0.85 });
+const resetParticles = () => Array.from({ length: PARTICLES }, () => makeParticle());
 
-const X0 = PAD;
-const X1 = X0 + PIPE_LENGTH;
-const X2 = X1 + SLOPE_LENGTH;
-const X3 = X2 + PIPE_LENGTH;
-const SVG_WIDTH = X3 + PAD;
-const SVG_HEIGHT = 0.5 * 2 * PX_PER_METER + 2 * PAD;
-const CY = SVG_HEIGHT / 2;
-
-// So that your laptop dont explode lmfao
-const PARTICLE_COUNT = 70;
-const VISUAL_SPEED = 30;
-const MAX_VISUAL_SPEED = 900;
-
-// Radius of the pipe at horizontal position x
-function radiusAt(x, left, right) {
-  if (x <= X1) return left;
-  if (x >= X2) return right;
-  const t = (x - X1) / SLOPE_LENGTH;
-  return left + (right - left) * t;
+function wingSpeed(x, lane, speed, angle) {
+  const nearWing = Math.exp(-(((x - WING_X) / WING_SPAN) ** 2));
+  return Math.min(speed * VISUAL_SPEED * (1 + nearWing * (lane < 0 ? 0.55 + Math.max(0, angle) * 0.018 : 0.16)), MAX_SPEED);
 }
 
-// Continuity: A1*v1 = A2*v2  ->  v = v0 * (r0 / r)^2 copy pasted from a random website
-function speedAt(x, left, right, v0) {
-  const r = radiusAt(x, left, right);
-  return Math.min(v0 * (left / r) ** 2 * VISUAL_SPEED, MAX_VISUAL_SPEED);
-}
-
-function makeParticle(randomX = true) {
-  return {
-    x: randomX ? X0 + Math.random() * (X3 - X0) : X0,
-    lane: Math.random() * 1.7 - 0.85, // -0.85..0.85 of the local half-height
-  };
+function wingY(x, lane, angle) {
+  const safeLane = Math.abs(lane) < 0.14 ? (lane < 0 ? -0.14 : 0.14) : lane;
+  const nearWing = Math.exp(-(((x - WING_X) / WING_SPAN) ** 2));
+  return CY + safeLane * 122 + (safeLane < 0 ? -1 : 1) * nearWing * (28 + Math.max(0, angle) * 1.2) + nearWing * ((x - WING_X) / WING_SPAN) * angle * 0.65;
 }
 
 function RateOfFlowSimulation() {
@@ -47,163 +27,85 @@ function RateOfFlowSimulation() {
   const [rightRadius, setRightRadius] = useState(DEFAULTS.right);
   const [speed, setSpeed] = useState(DEFAULTS.speed);
   const [running, setRunning] = useState(true);
-  const [particles, setParticles] = useState(() =>
-    Array.from({ length: PARTICLE_COUNT }, () => makeParticle(true))
-  );
-
-  const paramsRef = useRef({ left: leftRadius, right: rightRadius, speed });
-  paramsRef.current = { left: leftRadius, right: rightRadius, speed };
+  const [mode, setMode] = useState("flow");
+  const [angle, setAngle] = useState(6);
+  const [particles, setParticles] = useState(resetParticles);
+  const paramsRef = useRef({});
+  paramsRef.current = { leftRadius, rightRadius, speed, mode, angle };
 
   useEffect(() => {
-    if (!running) return;
-    let frameId;
-    let last = null;
-
+    if (!running) return undefined;
+    let frameId, last = null;
     const tick = (now) => {
       if (last === null) last = now;
-      const dt = Math.min((now - last) / 1000, 0.05); // seconds, clamped
+      const dt = Math.min((now - last) / 1000, 0.05);
       last = now;
-      const { left, right, speed: v0 } = paramsRef.current;
-
-      setParticles((prev) =>
-        prev.map((p) => {
-          const nx = p.x + speedAt(p.x, left, right, v0) * dt;
-          return nx > X3 ? makeParticle(false) : { ...p, x: nx };
-        })
-      );
+      const current = paramsRef.current;
+      setParticles((previous) => previous.map((particle) => {
+        const velocity = current.mode === "flow"
+          ? pipeSpeed(particle.x, current.leftRadius, current.rightRadius, current.speed)
+          : wingSpeed(particle.x, particle.lane, current.speed, current.angle);
+        const x = particle.x + velocity * dt;
+        return x > X3 ? makeParticle(false) : { ...particle, x };
+      }));
       frameId = requestAnimationFrame(tick);
     };
-
     frameId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frameId);
   }, [running]);
 
-
-  const lh = leftRadius * PX_PER_METER;   
-  const rh = rightRadius * PX_PER_METER;
-  const pipePath = [
-    `M ${X0} ${CY - lh}`,
-    `L ${X1} ${CY - lh}`,
-    `L ${X2} ${CY - rh}`,
-    `L ${X3} ${CY - rh}`,
-    `L ${X3} ${CY + rh}`,
-    `L ${X2} ${CY + rh}`,
-    `L ${X1} ${CY + lh}`,
-    `L ${X0} ${CY + lh}`,
-    "Z",
-  ].join(" ");
-
-  const swapSides = () => {
-    setLeftRadius(rightRadius);
-    setRightRadius(leftRadius);
-  };
-  const reset = () => {
-    setLeftRadius(DEFAULTS.left);
-    setRightRadius(DEFAULTS.right);
-    setSpeed(DEFAULTS.speed);
-  };
-  const venturiPreset = () => { //Default preset
-    setLeftRadius(0.25);
-    setRightRadius(0.15);
-    setSpeed(5.0);
-  };
-
-  // Under this are things that can be touched for decoration
+  const leftHeight = leftRadius * PX, rightHeight = rightRadius * PX;
+  const pipePath = [`M ${X0} ${CY - leftHeight}`, `L ${X1} ${CY - leftHeight}`, `L ${X2} ${CY - rightHeight}`, `L ${X3} ${CY - rightHeight}`, `L ${X3} ${CY + rightHeight}`, `L ${X2} ${CY + rightHeight}`, `L ${X1} ${CY + leftHeight}`, `L ${X0} ${CY + leftHeight}`, "Z"].join(" ");
+  const upperSpeed = speed * (1.35 + Math.max(0, angle) * 0.015), lowerSpeed = speed * 1.08;
+  const pressureDifference = Math.max(0, (upperSpeed - lowerSpeed) * 1.8);
+  const liftLength = 36 + Math.min(74, pressureDifference * 7);
+  const airfoilPath = `M ${WING_X - 120} ${CY + 5} Q ${WING_X - 18} ${CY - 58} ${WING_X + 118} ${CY - 4} Q ${WING_X - 18} ${CY + 30} ${WING_X - 120} ${CY + 5} Z`;
+  const reset = () => { setLeftRadius(DEFAULTS.left); setRightRadius(DEFAULTS.right); setSpeed(DEFAULTS.speed); setAngle(6); setParticles(resetParticles()); };
+  const switchMode = (nextMode) => { setMode(nextMode); setParticles(resetParticles()); };
 
   return (
-    <div>
-      <svg
-        viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
-        width="100%"
-        style={{ maxWidth: 700 }}
-        role="img"
-        aria-label={`Pipe narrowing from radius ${leftRadius} metres to ${rightRadius} metres`}
-      >
-        <defs>
-          <clipPath id="pipe-clip">
-            <path d={pipePath} />
-          </clipPath>
-        </defs>
-
-        {/* pipe bidy */}
-        <path d={pipePath} fill="#d7eefa" />
-
-        <g clipPath="url(#pipe-clip)">
-          {particles.map((p, i) => {
-            const r = radiusAt(p.x, leftRadius, rightRadius);
-            const y = CY + p.lane * r * PX_PER_METER;
-            return (
-              <circle key={i} cx={p.x} cy={y} r="3" fill="#1d7fb8" opacity="0.85" />
-            );
-          })}
-        </g>
-
-        {/* pipe outline on top Customize theez*/}
-        <path d={pipePath} fill="none" stroke="#023047" strokeWidth="2" strokeLinejoin="round" />
-      </svg>
-
-      <section aria-labelledby="flow-controls">
-        <h3 id="flow-controls" className="h5">Controls</h3>
-
-        <div className="mb-3">
-          <label htmlFor="left-pipe-radius" className="form-label">
-            Left pipe radius: {leftRadius.toFixed(2)} m
-          </label>
-          <input
-            id="left-pipe-radius"
-            className="form-range"
-            type="range"
-            min="0.05"
-            max="0.5"
-            step="0.01"
-            value={leftRadius}
-            onChange={(e) => setLeftRadius(Number(e.target.value))}
-          />
+    <div className="flow-simulation">
+      <div className="flow-simulation__mode-toggle" role="group" aria-label="Simulation mode">
+        <button type="button" className={`btn ${mode === "flow" ? "is-active" : ""}`} onClick={() => switchMode("flow")} aria-pressed={mode === "flow"}>Fluid Flow</button>
+        <button type="button" className={`btn ${mode === "wing" ? "is-active" : ""}`} onClick={() => switchMode("wing")} aria-pressed={mode === "wing"}>Airplane Wing</button>
+      </div>
+      <div className="flow-simulation__workspace">
+        <div className="flow-simulation__visual">
+          {mode === "flow" ? <>
+            <svg className="flow-simulation__pipe" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Pipe narrowing from radius ${leftRadius} metres to ${rightRadius} metres`}>
+              <defs><clipPath id="pipe-clip"><path d={pipePath} /></clipPath></defs><path d={pipePath} fill="#d7eefa" />
+              <g clipPath="url(#pipe-clip)">{particles.map((particle, index) => <circle key={index} cx={particle.x} cy={CY + particle.lane * radiusAt(particle.x, leftRadius, rightRadius) * PX} r="3" fill="#1d7fb8" opacity="0.85" />)}</g>
+              <path d={pipePath} fill="none" stroke="#023047" strokeWidth="2" strokeLinejoin="round" />
+            </svg><p className="flow-simulation__legend">Blue particles show the direction and relative speed of the fluid.</p>
+          </> : <>
+            <svg className="flow-simulation__airfoil" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Air flowing around a wing at ${angle} degrees angle of attack`}>
+              <defs><marker id="lift-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 10 L 5 0 L 10 10 Z" fill="#1e8449" /></marker></defs><rect width={W} height={H} fill="#f7fafc" />
+              {particles.map((particle, index) => <circle key={index} cx={particle.x} cy={wingY(particle.x, particle.lane, angle)} r="3" fill="#1d7fb8" opacity="0.85" />)}
+              <g transform={`rotate(${-angle} ${WING_X} ${CY})`}><path d={airfoilPath} fill="#d8a96f" stroke="#023047" strokeWidth="3" strokeLinejoin="round" /></g>
+              <line x1={WING_X} y1={CY + 26} x2={WING_X} y2={CY + 26 - liftLength} stroke="#1e8449" strokeWidth="4" markerEnd="url(#lift-arrow)" /><text x={WING_X + 12} y={CY + 20 - liftLength} fill="#17643a" fontSize="13" fontWeight="700">LIFT</text><text x={WING_X - 110} y={CY - 106} fill="#216b91" fontSize="12" fontWeight="700">LOW PRESSURE</text><text x={WING_X - 112} y={CY + 116} fill="#4c6372" fontSize="12" fontWeight="700">HIGHER PRESSURE</text>
+            </svg><p className="flow-simulation__legend">Particles speed up over the curved upper surface, creating lower pressure and lift.</p>
+          </>}
         </div>
-
-        <div className="mb-3">
-          <label htmlFor="right-pipe-radius" className="form-label">
-            Right pipe radius: {rightRadius.toFixed(2)} m
-          </label>
-          <input
-            id="right-pipe-radius"
-            className="form-range"
-            type="range"
-            min="0.05"
-            max="0.5"
-            step="0.01"
-            value={rightRadius}
-            onChange={(e) => setRightRadius(Number(e.target.value))}
-          />
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="initial-flow-speed" className="form-label">
-            Initial speed: {speed.toFixed(1)} m/s
-          </label>
-          <input
-            id="initial-flow-speed"
-            className="form-range"
-            type="range"
-            min="0"
-            max="20"
-            step="0.1"
-            value={speed}
-            onChange={(e) => setSpeed(Number(e.target.value))}
-          />
-        </div>
-
-        <div className="d-flex flex-wrap gap-2">
-          <button type="button" className="btn btn-primary" onClick={() => setRunning((r) => !r)}>
-            {running ? "Pause flow" : "Start flow"}
-          </button>
-          <button type="button" className="btn btn-secondary" onClick={swapSides}>Swap sides</button>
-          <button type="button" className="btn btn-outline-secondary" onClick={reset}>Reset</button>
-          <button type="button" className="btn btn-secondary" onClick={venturiPreset}>Default Preset</button>
-        </div>
-      </section>
+        <section className="flow-simulation__controls" aria-label={mode === "flow" ? "Flow experiment controls" : "Airplane wing controls"}>
+          <div className="flow-simulation__actions"><button type="button" className="btn flow-simulation__run" onClick={() => setRunning((isRunning) => !isRunning)}>{running ? "Pause flow" : "Start flow"}</button>{mode === "flow" && <button type="button" className="btn flow-simulation__swap" onClick={() => { setLeftRadius(rightRadius); setRightRadius(leftRadius); }}>Swap sides</button>}<button type="button" className="btn flow-simulation__reset" onClick={reset}>Reset</button></div>
+          {mode === "flow" ? <>
+            <Slider id="left-pipe-radius" label={`Left pipe radius: ${leftRadius.toFixed(2)} m`} value={leftRadius} min="0.05" max="0.5" step="0.01" onChange={setLeftRadius} />
+            <Slider id="right-pipe-radius" label={`Right pipe radius: ${rightRadius.toFixed(2)} m`} value={rightRadius} min="0.05" max="0.5" step="0.01" onChange={setRightRadius} />
+            <Slider id="initial-flow-speed" label={`Initial speed: ${speed.toFixed(1)} m/s`} value={speed} min="0" max="20" step="0.1" onChange={setSpeed} />
+            <div className="flow-simulation__preset-group"><span className="form-label">Experiment preset</span><div className="flow-simulation__preset-buttons"><button type="button" className="btn flow-simulation__preset" onClick={() => { setLeftRadius(0.25); setRightRadius(0.15); setSpeed(5); }}>Default Preset</button></div></div>
+          </> : <>
+            <Slider id="wing-air-speed" label={`Airflow speed: ${speed.toFixed(1)} m/s`} value={speed} min="0" max="20" step="0.1" onChange={setSpeed} />
+            <Slider id="angle-of-attack" label={`Angle of attack: ${angle.toFixed(0)}°`} value={angle} min="-8" max="18" step="1" onChange={setAngle} />
+            <dl className="flow-simulation__wing-readouts"><div><dt>Above wing</dt><dd>{upperSpeed.toFixed(1)} m/s</dd></div><div><dt>Below wing</dt><dd>{lowerSpeed.toFixed(1)} m/s</dd></div><div><dt>Pressure difference</dt><dd>{pressureDifference.toFixed(1)} units</dd></div><div><dt>Lift</dt><dd>{pressureDifference > 0 ? "Upward" : "None"}</dd></div></dl>
+          </>}
+        </section>
+      </div>
     </div>
   );
+}
+
+function Slider({ id, label, value, min, max, step, onChange }) {
+  return <div className="flow-simulation__slider-group"><label htmlFor={id} className="form-label">{label}</label><input id={id} className="form-range" type="range" min={min} max={max} step={step} value={value} onChange={(event) => onChange(Number(event.target.value))} /></div>;
 }
 
 export default RateOfFlowSimulation;

@@ -134,7 +134,6 @@ function ArchimedesSimulation() {
         viewBox={`0 0 ${SVG_W} ${SVG_H}`}
         width="100%"
         style={{
-          maxWidth: 440,
           borderRadius: 12,
           border: "1px solid #d5e0ea",
           background: "linear-gradient(#f7fafc, #e7eff5)",

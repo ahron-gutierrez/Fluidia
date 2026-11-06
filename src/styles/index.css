@@ -2057,6 +2057,11 @@ label {
   overflow: hidden;
 }
 
+.density-lesson .lesson-concept {
+  min-height: 0;
+  align-self: start;
+}
+
 .density-lesson .lesson-card-heading {
   margin: 0 -1.15rem 1.15rem;
 }
@@ -2264,7 +2269,7 @@ label {
 
 .archimedes-simulation__workspace {
   display: grid;
-  grid-template-columns: minmax(18rem, 1.15fr) minmax(16rem, 0.85fr);
+  grid-template-columns: minmax(22rem, 1.35fr) minmax(15rem, 0.65fr);
   gap: clamp(0.85rem, 1.25vw, 1.25rem);
   align-items: start;
 }
@@ -2272,16 +2277,16 @@ label {
 .archimedes-simulation__visual {
   display: grid;
   justify-items: center;
-  padding: 0.55rem;
+  padding: clamp(0.65rem, 1vw, 1rem);
   border: 2px solid #9db4c4;
   background: #eef5f8;
 }
 
 .archimedes-simulation__tank {
   display: block;
-  width: auto;
-  max-width: 100%;
-  height: min(38vh, 19rem);
+  width: 100%;
+  max-width: 34rem;
+  height: auto;
   border: 2px solid #7894a7 !important;
   border-radius: 0 !important;
 }
@@ -2445,7 +2450,9 @@ label {
 
 .flow-simulation-card.lesson-card {
   --simulation-card-padding: clamp(1rem, 1.5vw, 1.35rem);
+  min-height: 0;
   padding: 0 var(--simulation-card-padding) var(--simulation-card-padding);
+  align-self: start;
 }
 
 .flow-simulation-card.lesson-card > .lesson-card-heading {
@@ -2454,15 +2461,42 @@ label {
 
 .flow-simulation__workspace {
   display: grid;
-  grid-template-columns: minmax(17rem, 1.2fr) minmax(15rem, 0.8fr);
+  grid-template-columns: minmax(22rem, 1.35fr) minmax(15rem, 0.65fr);
   gap: clamp(0.85rem, 1.25vw, 1.25rem);
   align-items: start;
+}
+
+.flow-simulation__mode-toggle {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 0.7rem;
+  border: 2px solid #102c48;
+  background: #dce8ed;
+}
+
+.flow-simulation__mode-toggle .btn {
+  min-height: 2.3rem;
+  border: 0;
+  border-right: 2px solid #102c48;
+  box-shadow: none;
+  color: #27485d;
+  background: transparent;
+  text-transform: uppercase;
+}
+
+.flow-simulation__mode-toggle .btn:last-child { border-right: 0; }
+
+.flow-simulation__mode-toggle .btn.is-active {
+  color: #fff;
+  background: #165d87;
+  box-shadow: inset 0 -3px 0 #0e3853;
 }
 
 .flow-simulation__visual {
   display: grid;
   justify-items: center;
-  padding: clamp(0.65rem, 1vw, 0.95rem);
+  padding: clamp(0.65rem, 1vw, 1rem);
   border: 2px solid #9db4c4;
   background: #eef5f8;
 }
@@ -2470,7 +2504,15 @@ label {
 .flow-simulation__pipe {
   display: block;
   width: 100%;
-  max-width: 40rem;
+  max-width: 44rem;
+  border: 2px solid #7894a7;
+  background: #f7fafc;
+}
+
+.flow-simulation__airfoil {
+  display: block;
+  width: 100%;
+  max-width: 44rem;
   border: 2px solid #7894a7;
   background: #f7fafc;
 }
@@ -2527,8 +2569,26 @@ label {
   font-weight: 700;
 }
 
+.flow-simulation__wing-readouts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin: 0.65rem 0 0;
+}
+
+.flow-simulation__wing-readouts > div {
+  padding: 0.38rem;
+  border-left: 3px solid #4c9fbc;
+  background: #eaf3f6;
+}
+
+.flow-simulation__wing-readouts dt { font-size: 0.62rem; }
+.flow-simulation__wing-readouts dd { margin: 0.1rem 0 0; color: #102c48; font-weight: 700; }
+
 @media (max-width: 760px) {
   .flow-simulation__workspace { grid-template-columns: 1fr; }
+  .flow-simulation__mode-toggle { width: 100%; }
+  .flow-simulation__mode-toggle .btn { flex: 1; padding-right: 0.35rem; padding-left: 0.35rem; }
 }
 
 @media (max-width: 900px) {
