@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import PasswordInput from "../components/PasswordInput";
+
 import { getCurrentUser, getProgress, login } from "../data/gameData";
 
 function Login() {
@@ -69,7 +71,7 @@ function Login() {
           <label htmlFor="login-password" className="form-label">
             Password
           </label>
-          <input
+          <PasswordInput
             id="login-password"
             name="password"
             className="form-control"

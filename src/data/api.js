@@ -14,14 +14,19 @@ export function setToken(token) {
 }
 
 // Returns { ok, status, data }. Never throws: a network failure gives status 0.
-export async function request(path, { method = "GET", body, keepalive = false } = {}) {
+export async function request(path, options = {}) {
+  return requestRaw(`${API_BASE}${path}`, options);
+}
+
+// Same as request(), but takes a full URL such as "/api/leaderboard".
+export async function requestRaw(url, { method = "GET", body, keepalive = false } = {}) {
   const headers = {};
   if (body !== undefined) headers["Content-Type"] = "application/json";
   const token = getToken();
   if (token) headers.Authorization = `Bearer ${token}`;
 
   try {
-    const response = await fetch(`${API_BASE}${path}`, {
+    const response = await fetch(url, {
       method,
       headers,
       keepalive,

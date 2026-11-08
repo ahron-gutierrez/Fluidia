@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import DressingRoom from "../components/DressingRoom";
+import PasswordInput from "../components/PasswordInput";
 import { deleteAccount, getCurrentUser, updateAccount } from "../data/gameData";
 
 function EditAccount() {
@@ -13,9 +14,12 @@ function EditAccount() {
     name: currentUser?.name ?? "",
     email: currentUser?.email ?? "",
     password: "",
+    confirm: "",
   });
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("error");
+
+  const mismatch = formValues.password !== formValues.confirm && (formValues.password !== "" || formValues.confirm !== "");
 
   if (!currentUser) {
     return (
@@ -39,6 +43,12 @@ function EditAccount() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (formValues.password !== formValues.confirm) {
+      setMessageType("error");
+      setMessage("Your new passwords don't match. Please type them again.");
+      return;
+    }
+
     const nextEmail = formValues.email.trim() || currentUser.email;
     const { user: updatedUser, message: errorMessage } = await updateAccount(
       currentUser.id,
@@ -54,7 +64,7 @@ function EditAccount() {
     }
 
     setCurrentUser(updatedUser);
-    setFormValues((current) => ({ ...current, password: "" }));
+    setFormValues((current) => ({ ...current, password: "", confirm: "" }));
     setMessageType("success");
     setMessage("Your account details were saved.");
   };
@@ -108,7 +118,7 @@ function EditAccount() {
             />
 
             <label htmlFor="account-password" className="form-label">New password</label>
-            <input
+            <PasswordInput
               id="account-password"
               name="password"
               className="form-control"
@@ -117,6 +127,22 @@ function EditAccount() {
               value={formValues.password}
               onChange={handleChange}
             />
+
+            <label htmlFor="account-confirm" className="form-label">Confirm new password</label>
+            <PasswordInput
+              id="account-confirm"
+              name="confirm"
+              autoComplete="new-password"
+              placeholder="Type it again"
+              value={formValues.confirm}
+              onChange={handleChange}
+              aria-invalid={mismatch}
+            />
+            {formValues.password || formValues.confirm ? (
+              <p className={`password-match ${mismatch ? "bad" : "ok"}`} role="status">
+                {mismatch ? "Passwords don't match yet." : "Passwords match."}
+              </p>
+            ) : null}
 
             {message ? <p className={`form-message ${messageType}`}>{message}</p> : null}
 

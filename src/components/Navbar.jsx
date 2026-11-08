@@ -140,6 +140,9 @@ function Navbar() {
               Quizzes
             </NavLink>
           ) : null}
+          <NavLink to="/leaderboard" onClick={closeAllMenus}>
+            Leaderboard
+          </NavLink>
           {user ? (
             <details className="nav-profile-menu" ref={profileMenuRef}>
               <summary
