@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import BgMusic from "../components/BgMusic";
+
 
 import { ACHIEVEMENTS, RARITY, evaluateAchievements } from "../data/achievements";
 import { getCurrentUser, getProgress } from "../data/gameData";
@@ -37,6 +39,7 @@ function Achievements() {
 
   return (
     <main className="container py-4">
+      <BgMusic track="lab"/>
       <div className="pixel-panel achievements-panel">
         <p className="eyebrow accent">Trophy room</p>
         <h1 className="pixel-heading md">Achievements</h1>

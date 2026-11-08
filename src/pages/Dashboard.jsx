@@ -6,6 +6,7 @@ import AvatarEditor from "../components/AvatarEditor";
 import FluidiaMap from "../components/FluidiaMap";
 import LocationInfo from "../components/LocationInfo";
 import { evaluateAchievements } from "../data/achievements";
+import BgMusic from "../components/BgMusic";
 import { DEFAULT_AVATAR_ROW } from "../data/avatarAssets";
 import {
   QUESTS,
@@ -48,6 +49,7 @@ function Dashboard() {
 
   return (
     <main className="container py-5 dashboard-layout dashboard-game-layout">
+      <BgMusic track="home"/>
       <section className="pixel-panel dashboard-welcome-bar">
         <div>
           <h1 className="pixel-heading md">Welcome to Fluidia, {currentUser.name || "Explorer"}!</h1>

@@ -7,6 +7,7 @@ import { getAvatar, getCurrentUser } from "../data/gameData";
 import FlowSandbox from "../features/sandbox/FlowSandbox";
 import FloatSandbox from "../features/sandbox/FloatSandbox";
 import PressureSandbox from "../features/sandbox/PressureSandbox";
+import BgMusic from "../components/BgMusic";
 import "../styles/Sandbox.css";
 
 const LESSONS = {
@@ -54,6 +55,7 @@ function Sandbox() {
   if (!entry) {
     return (
       <main className="container py-5">
+        <BgMusic track="quiz"/>
         <div className="pixel-panel alert-panel">
           <h1 className="pixel-heading md">Sandbox not found</h1>
           <Link to="/fluids" className="btn btn-primary">Back to lessons</Link>

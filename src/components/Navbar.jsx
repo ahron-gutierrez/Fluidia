@@ -78,7 +78,7 @@ function Navbar() {
     <header className="topbar">
       <div className="container navbar-shell">
         <Link to="/" className="brand-mark" aria-label="Fluidia home">
-          <img className="brand-icon" src="/fluidia-logo.webp" alt="" />
+          <img className="brand-icon" src="/fluidia-logo.jpeg" alt="" />
           <span>Fluidia</span>
         </Link>
 

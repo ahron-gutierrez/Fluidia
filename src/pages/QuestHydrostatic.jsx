@@ -5,6 +5,7 @@ import ConfirmLeave from "../components/ConfirmLeave";
 import HintHelper from "../components/HintHelper";
 import PixelWater from "../components/PixelWater";
 import RoundIntro from "../components/RoundIntro";
+import BgMusic from "../components/BgMusic";
 import SpriteSlot from "../components/SpriteSlot";
 import { DEFAULT_AVATAR_ID } from "../data/avatarAssets";
 import * as fx from "../utils/pixelFx";
@@ -294,6 +295,7 @@ function QuestHydrostatic() {
 
   return (
     <main className="container py-4">
+      <BgMusic track="quest1"/>
       {summary && (
         <QuestSummary {...summary} spriteId={spriteId} onContinue={() => setSummary(null)} />
       )}

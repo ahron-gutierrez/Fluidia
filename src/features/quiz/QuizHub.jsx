@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import BgMusic from "../../components/BgMusic";
 
 import { getCurrentUser, getProgress } from "../../data/gameData";
 import { POINTS_PER_CORRECT, QUIZZES } from "./quizData";
@@ -24,6 +25,7 @@ function QuizHub() {
 
   return (
     <main className="container py-4">
+      <BgMusic track="account"/>
       <div className="pixel-panel endless-panel">
         <p className="eyebrow accent">Quiz Hall</p>
         <h1 className="pixel-heading md">Test your knowledge</h1>

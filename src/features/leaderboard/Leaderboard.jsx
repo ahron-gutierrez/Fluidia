@@ -6,6 +6,7 @@ import { DEFAULT_AVATAR_ID } from "../../data/avatarAssets";
 import { requestRaw } from "../../data/api";
 import { flushSync, getCurrentUser } from "../../data/gameData";
 import "../../styles/Leaderboard.css";
+import BgMusic from "../../components/BgMusic";
 
 const SHOWN = 10;
 const REFRESH_MS = 20000;
@@ -61,6 +62,7 @@ function Leaderboard() {
 
   return (
     <main className="container py-4">
+      <BgMusic track="leaderboard"/>
       <div className="pixel-panel leaderboard-panel">
         <p className="eyebrow accent">Hall of fame</p>
         <h1 className="pixel-heading md">Leaderboard</h1>

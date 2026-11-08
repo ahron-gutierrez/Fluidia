@@ -8,6 +8,9 @@ import { DEFAULT_AVATAR_ID, AVATAR_POSES } from "../data/avatarAssets";
 import { getAvatar, getCurrentUser, getProgress } from "../data/gameData";
 import "../styles/Lobby.css";
 
+//fun
+import BackgroundMusicIntro from "../components/BgMusic";
+
 const IDLE_ROW = AVATAR_POSES.find((p) => p.label === "Idle").row;
 const WALK_ROW = AVATAR_POSES.find((p) => p.label === "Walk").row;
 
@@ -384,13 +387,14 @@ function StoryIntro() {
 
         {/* Player avatar (uses the player's chosen sprite sheet) */}
         <div
+        
           className="lobby-avatar"
           style={{
             left: `${pos.x}%`,
             top: `${pos.y}%`,
             zIndex: Math.round(pos.y),
           }}
-        >
+        ><BackgroundMusicIntro track="home"/> 
           <div style={{ transform: facingLeft ? "scaleX(-1)" : undefined }}>
             <AnimatedAvatar
               spriteId={spriteId}

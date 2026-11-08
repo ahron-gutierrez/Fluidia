@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import BgMusic from "../../components/BgMusic";
 
 const DEFAULTS = { objectDensity: 600, fluidDensity: 1000, volume: 0.005 };
 // do not touch (this these are the logics)
@@ -127,6 +128,7 @@ function ArchimedesSimulation() {
   // actual UI side
   return (
     <div className="archimedes-simulation">
+      <BgMusic track="quest1"/>
       <div className="archimedes-simulation__workspace">
         <div className="archimedes-simulation__visual">
       <svg

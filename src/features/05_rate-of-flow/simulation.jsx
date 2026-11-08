@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import BgMusic from "../../components/BgMusic";
 
 const DEFAULTS = { left: 0.25, right: 0.15, speed: 5 };
 const PX = 300, PAD = 20, PIPE = 160, SLOPE = 80;
@@ -65,6 +66,7 @@ function RateOfFlowSimulation() {
 
   return (
     <div className="flow-simulation">
+      <BgMusic track="quiz"/>
       <div className="flow-simulation__mode-toggle" role="group" aria-label="Simulation mode">
         <button type="button" className={`btn ${mode === "flow" ? "is-active" : ""}`} onClick={() => switchMode("flow")} aria-pressed={mode === "flow"}>Fluid Flow</button>
         <button type="button" className={`btn ${mode === "wing" ? "is-active" : ""}`} onClick={() => switchMode("wing")} aria-pressed={mode === "wing"}>Airplane Wing</button>

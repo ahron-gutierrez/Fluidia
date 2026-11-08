@@ -4,6 +4,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import DressingRoom from "../components/DressingRoom";
 import PasswordInput from "../components/PasswordInput";
 import { deleteAccount, getCurrentUser, updateAccount } from "../data/gameData";
+// fun fun
+import BackgroundMusicDresser from "../components/BgMusic";
 
 function EditAccount() {
   const navigate = useNavigate();
@@ -85,6 +87,7 @@ function EditAccount() {
 
   return (
     <main className="container py-5">
+      <BackgroundMusicDresser track="account"/>
       <div className="pixel-panel account-shell">
         <div className="account-header">
           <div>

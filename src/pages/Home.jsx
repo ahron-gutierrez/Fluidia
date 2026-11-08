@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-
+import BgMusic from "../components/BgMusic";
 import { getCurrentUser, getProgress } from "../data/gameData";
 
 function Home() {
@@ -10,6 +10,7 @@ function Home() {
 
   return (
     <main className="landing-page">
+      <BgMusic track="title"/>
       <div className="landing-scene">
         <div className="parallax-layers" aria-hidden="true">
           <div className="parallax-layer sky-layer" />

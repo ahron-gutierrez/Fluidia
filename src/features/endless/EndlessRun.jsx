@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useBlocker, useParams } from "react-router-dom";
+import BgMusic from "../../components/BgMusic";
 
 import AnimatedAvatar from "../../components/AnimatedAvatar";
 import ConfirmLeave from "../../components/ConfirmLeave";
@@ -177,6 +178,7 @@ function EndlessRun() {
 
   return (
     <main className="container py-4">
+      <BgMusic track="endless"/>
       {blocker.state === "blocked" && <ConfirmLeave onStay={() => blocker.reset()} onLeave={() => blocker.proceed()} />}
 
       <div className="pixel-panel endless-panel" style={{ "--accent": topic.accent }}>

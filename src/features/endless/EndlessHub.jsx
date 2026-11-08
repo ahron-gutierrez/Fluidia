@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { getCurrentUser, getProgress } from "../../data/gameData";
 import { ENDLESS_TOPICS, START_LIVES } from "./generators";
 import "../../styles/Endless.css";
+import BgMusic from "../../components/BgMusic";
 
 // Lists the endless modes. Each one unlocks when its quest has been completed.
 function EndlessHub() {
@@ -25,6 +26,7 @@ function EndlessHub() {
 
   return (
     <main className="container py-4">
+      <BgMusic track="pipes"/>
       <div className="pixel-panel endless-panel">
         <p className="eyebrow accent">Endless mode</p>
         <h1 className="pixel-heading md">How far can you go?</h1>

@@ -11,6 +11,7 @@ import RoundIntro from "../components/RoundIntro";
 import SpriteSlot from "../components/SpriteSlot";
 import { DEFAULT_AVATAR_ID } from "../data/avatarAssets";
 import { recordQuestResult } from "../data/achievements";
+import BgMusic from "../components/BgMusic";
 import {
   addScore,
   calculateQuestScore,
@@ -154,6 +155,7 @@ function LaboratoryQuest() {
 
   return (
     <main className="container py-4">
+      <BgMusic track="lab"/>
       <PageReveal />
       {summary && <QuestSummary {...summary} spriteId={spriteId} onContinue={() => setSummary(null)} />}
       {blocker.state === "blocked" && (
